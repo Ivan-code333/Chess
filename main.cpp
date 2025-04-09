@@ -1,25 +1,41 @@
 #include <iostream>
+#include "board.hpp"
+#include "piece.hpp"
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    // Инициализация доски
+    Board board;
+    board.setupInitialPosition();
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+    // Отладочный вывод начальной позиции
+    std::cout << "Initial board:" << std::endl;
+    board.print();
+
+    // Пример 1: Ход белой пешки e2 -> e4
+    std::cout << "\nMoving white pawn e2 -> e4..." << std::endl;
+    if (board.isMoveLegal({4, 1}, {4, 3}, Color::WHITE)) {
+        board.movePiece({4, 1}, {4, 3});
+        board.print();
+    } else {
+        std::cerr << "Invalid move!" << std::endl;
+    }
+
+    // Пример 2: Ход черного коня g8 -> f6
+    std::cout << "\nMoving black knight g8 -> f6..." << std::endl;
+    if (board.isMoveLegal({6, 7}, {5, 5}, Color::BLACK)) {
+        board.movePiece({6, 7}, {5, 5});
+        board.print();
+    } else {
+        std::cerr << "Invalid move!" << std::endl;
+    }
+
+    // Пример 3: Неверный ход (ладья не может перепрыгивать)
+    std::cout << "\nTrying illegal move (a1 -> a3)..." << std::endl;
+    if (board.isMoveLegal({0, 0}, {0, 2}, Color::WHITE)) {
+        board.movePiece({0, 0}, {0, 2});
+    } else {
+        std::cerr << "Move rejected (as expected)." << std::endl;
     }
 
     return 0;
 }
-
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
