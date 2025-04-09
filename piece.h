@@ -24,7 +24,11 @@ struct Position {
 
     Position(int x = -1, int y = -1) : x(x), y(y) {}
     bool isValid() const { return x >= 0 && x < 8 && y >= 0 && y < 8; }
-    bool operator==(const Position& other) const { return x == other.x && y == other.y; }
+
+    // Добавьте оператор сравнения
+    bool operator==(const Position& other) const {
+        return x == other.x && y == other.y;
+    }
 };
 
 // Предварительное объявление класса Board для использования в Piece

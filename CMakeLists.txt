@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(Chess main.cpp
         piece.h
-        piece.cpp)
+        piece.cpp
+        board.cpp
+        board.h)

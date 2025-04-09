@@ -2,8 +2,8 @@
 // Created by Fores on 09.04.2025.
 //
 
-#include "piece.hpp"
-#include "board.hpp"
+#include "piece.h"
+#include "board.h"
 #include <algorithm>
 
 // ===== King =====

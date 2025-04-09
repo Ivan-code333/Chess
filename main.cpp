@@ -1,6 +1,6 @@
 #include <iostream>
-#include "board.hpp"
-#include "piece.hpp"
+#include "board.h"
+#include "piece.h"
 
 int main() {
     // Инициализация доски
