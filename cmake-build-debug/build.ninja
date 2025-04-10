@@ -67,6 +67,12 @@ build CMakeFiles/Chess.dir/board.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$
   OBJECT_DIR = CMakeFiles\Chess.dir
   OBJECT_FILE_DIR = CMakeFiles\Chess.dir
 
+build CMakeFiles/Chess.dir/move.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/move.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\move.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Chess
@@ -75,7 +81,7 @@ build CMakeFiles/Chess.dir/board.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$
 #############################################
 # Link the executable Chess.exe
 
-build Chess.exe: CXX_EXECUTABLE_LINKER__Chess_Debug CMakeFiles/Chess.dir/main.cpp.obj CMakeFiles/Chess.dir/piece.cpp.obj CMakeFiles/Chess.dir/board.cpp.obj
+build Chess.exe: CXX_EXECUTABLE_LINKER__Chess_Debug CMakeFiles/Chess.dir/main.cpp.obj CMakeFiles/Chess.dir/piece.cpp.obj CMakeFiles/Chess.dir/board.cpp.obj CMakeFiles/Chess.dir/move.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Chess.dir

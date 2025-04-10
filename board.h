@@ -4,48 +4,83 @@
 
 #ifndef BOARD_H
 #define BOARD_H
+// board.h
 #pragma once
-#include <array>
-#include <memory>
-#include <vector>
 #include "piece.h"
+#include "move.h"
+#include <vector>
+#include <string>
 
 class Board {
+private:
+    Piece pieces[8][8];
+    std::vector<Move> moveHistory;
+
+    // Состояние для взятия на проходе
+    Position enPassantTarget;
+
+    // Для определения возможности рокировки
+    bool whiteKingMoved;
+    bool blackKingMoved;
+    bool whiteKingsideRookMoved;
+    bool whiteQueensideRookMoved;
+    bool blackKingsideRookMoved;
+    bool blackQueensideRookMoved;
+
 public:
     Board();
 
-    // Управление доской
-    void setupInitialPosition();
+    // Инициализация доски
+    void setupNewGame();
     void clear();
 
-    // Работа с фигурами
-    Piece* getPiece(int x, int y) const;
-    void setPiece(int x, int y, std::unique_ptr<Piece> piece);
-    void movePiece(const Position& from, const Position& to);
+    // Доступ к фигурам
+    Piece getPiece(const Position& pos) const;
+    void setPiece(const Position& pos, const Piece& piece);
+    void removePiece(const Position& pos);
 
-    // Проверка правил
-    bool isMoveLegal(const Position& from, const Position& to, Color player) const;
-    bool isInCheck(Color color) const;
+    // Перемещение фигур
+    bool makeMove(const Move& move);
+    void undoLastMove();
+
+    // Проверка ходов
+    bool isValidMove(const Move& move, Color currentPlayer) const;
+    std::vector<Move> getAllLegalMoves(Color currentPlayer) const;
+
+    // Специальные проверки
+    bool isCheck(Color color) const;
     bool isCheckmate(Color color) const;
+    bool isStalemate(Color color) const;
 
-    // Вспомогательные методы
-    bool isEmpty(int x, int y) const;
-    bool isEnemy(int x, int y, Color color) const;
-    bool isFriend(int x, int y, Color color) const;
+    // Проверка окончания игры
+    bool isGameOver() const;
 
-    // Отладочный вывод
-    void print() const;
+    // Генерация нотации FEN
+    std::string toFEN() const;
+
+    // Получение последнего хода
+    Move getLastMove() const;
+
+    // Получение истории ходов
+    const std::vector<Move>& getMoveHistory() const;
+
+    // Поиск короля
+    Position findKing(Color color) const;
+
+    // Генерация всех ходов для фигуры
+    std::vector<Move> generatePieceMoves(const Position& pos) const;
 
 private:
-    std::array<std::array<std::unique_ptr<Piece>, 8>, 8> grid;
+    // Вспомогательные методы
+    bool isUnderAttack(const Position& pos, Color attackerColor) const;
+    bool moveResultsInCheck(const Move& move, Color currentPlayer) const;
 
-    // Проверка особых ходов
-    bool isValidCastling(const Position& kingPos, const Position& rookPos, Color color) const;
-    bool isValidEnPassant(const Position& pawnPos, const Position& targetPos) const;
-
-    // Внутренние проверки
-    bool isSquareAttacked(int x, int y, Color byColor) const;
-    Position findKing(Color color) const;
+    // Генераторы ходов для конкретных типов фигур
+    std::vector<Move> generatePawnMoves(const Position& pos) const;
+    std::vector<Move> generateKnightMoves(const Position& pos) const;
+    std::vector<Move> generateBishopMoves(const Position& pos) const;
+    std::vector<Move> generateRookMoves(const Position& pos) const;
+    std::vector<Move> generateQueenMoves(const Position& pos) const;
+    std::vector<Move> generateKingMoves(const Position& pos) const;
 };
-
 #endif //BOARD_H

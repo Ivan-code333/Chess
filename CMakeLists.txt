@@ -7,4 +7,6 @@ add_executable(Chess main.cpp
         piece.h
         piece.cpp
         board.cpp
-        board.h)
+        board.h
+        move.cpp
+        move.h)
