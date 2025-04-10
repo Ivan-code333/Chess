@@ -1,46 +1,16 @@
-//
-// Created by Fores on 10.04.2025.
-//
-
 #ifndef MOVE_H
 #define MOVE_H
-// move.h
-#pragma once
+
+#include "board.h"
 #include "piece.h"
-#include <string>
 
-enum class MoveType {
-    NORMAL,
-    CAPTURE,
-    CASTLE_KINGSIDE,
-    CASTLE_QUEENSIDE,
-    EN_PASSANT,
-    PROMOTION,
-    INVALID
-};
-
-class Move {
-private:
-    Position from;
-    Position to;
-    PieceType promotionType;
-    MoveType moveType;
-
+class MoveHandler {
 public:
-    Move();
-    Move(Position from, Position to, MoveType moveType = MoveType::NORMAL, PieceType promotionType = PieceType::NONE);
+    // Проверка и выполнение хода
+    static bool tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
 
-    Position getFrom() const;
-    Position getTo() const;
-    MoveType getMoveType() const;
-    PieceType getPromotionType() const;
-
-    void setMoveType(MoveType type);
-    void setPromotionType(PieceType type);
-
-    std::string toNotation() const;
-    bool isValid() const;
-
-    bool operator==(const Move& other) const;
+private:
+    static bool isPathClear(const Board& board, int fromRow, int fromCol, int toRow, int toCol);
 };
-#endif //MOVE_H
+
+#endif // MOVE_H

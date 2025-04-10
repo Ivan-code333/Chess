@@ -5,3 +5,8 @@
 50	2698	7659522096708611	CMakeFiles/Chess.dir/piece.cpp.obj	7e00a806ccd55b1c
 89	2801	7659522097108044	CMakeFiles/Chess.dir/move.cpp.obj	60625ea453a72033
 72	3402	7659522096932600	CMakeFiles/Chess.dir/board.cpp.obj	50fa24e8ad874290
+48	1961	7659597230294596	CMakeFiles/Chess.dir/piece.cpp.obj	7e00a806ccd55b1c
+26	2222	7659597230072475	CMakeFiles/Chess.dir/main.cpp.obj	392ddeba826423d5
+79	2347	7659597230614584	CMakeFiles/Chess.dir/move.cpp.obj	60625ea453a72033
+66	2948	7659597230474097	CMakeFiles/Chess.dir/board.cpp.obj	50fa24e8ad874290
+2948	3357	7659597259285706	Chess.exe	afdabb4ead550007

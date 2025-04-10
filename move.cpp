@@ -1,64 +1,44 @@
-//
-// Created by Fores on 10.04.2025.
-//
-
 #include "move.h"
-// move.cpp
+#include <cmath>
 
+bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
+    if (!board.isInsideBoard(fromRow, fromCol) || !board.isInsideBoard(toRow, toCol))
+        return false;
 
-Move::Move() : from(), to(), promotionType(PieceType::NONE), moveType(MoveType::INVALID) {}
+    auto piece = board.getPiece(fromRow, fromCol);
+    if (!piece || piece->getColor() != currentTurn)
+        return false;
 
-Move::Move(Position from, Position to, MoveType moveType, PieceType promotionType)
-    : from(from), to(to), moveType(moveType), promotionType(promotionType) {}
+    if (!piece->isMoveLegal(fromRow, fromCol, toRow, toCol))
+        return false;
 
-Position Move::getFrom() const {
-    return from;
-}
+    auto target = board.getPiece(toRow, toCol);
+    if (target && target->getColor() == currentTurn)
+        return false;
 
-Position Move::getTo() const {
-    return to;
-}
-
-MoveType Move::getMoveType() const {
-    return moveType;
-}
-
-PieceType Move::getPromotionType() const {
-    return promotionType;
-}
-
-void Move::setMoveType(MoveType type) {
-    moveType = type;
-}
-
-void Move::setPromotionType(PieceType type) {
-    promotionType = type;
-}
-
-std::string Move::toNotation() const {
-    if (!isValid()) return "";
-
-    std::string notation = from.toNotation() + to.toNotation();
-
-    // Добавляем обозначение фигуры при повышении пешки
-    if (moveType == MoveType::PROMOTION) {
-        switch (promotionType) {
-            case PieceType::QUEEN: notation += "q"; break;
-            case PieceType::ROOK: notation += "r"; break;
-            case PieceType::BISHOP: notation += "b"; break;
-            case PieceType::KNIGHT: notation += "n"; break;
-            default: break;
-        }
+    // Проверка пути (кроме коня)
+    if (dynamic_cast<Knight*>(piece.get()) == nullptr) {
+        if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
+            return false;
     }
 
-    return notation;
+    // Все проверки пройдены, делаем ход
+    board.movePiece(fromRow, fromCol, toRow, toCol);
+    return true;
 }
 
-bool Move::isValid() const {
-    return from.isValid() && to.isValid();
-}
+// Проверка, что путь от from до to чист (по горизонтали, вертикали или диагонали)
+bool MoveHandler::isPathClear(const Board& board, int fromRow, int fromCol, int toRow, int toCol) {
+    int dRow = (toRow - fromRow) == 0 ? 0 : (toRow - fromRow) / std::abs(toRow - fromRow);
+    int dCol = (toCol - fromCol) == 0 ? 0 : (toCol - fromCol) / std::abs(toCol - fromCol);
 
-bool Move::operator==(const Move& other) const {
-    return from == other.from && to == other.to && moveType == other.moveType &&
-           promotionType == other.promotionType;
+    int r = fromRow + dRow;
+    int c = fromCol + dCol;
+    while (r != toRow || c != toCol) {
+        if (board.getPiece(r, c))
+            return false;
+        r += dRow;
+        c += dCol;
+    }
+    return true;
 }
