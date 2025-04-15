@@ -55,23 +55,35 @@ build CMakeFiles/Chess.dir/main.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:
   OBJECT_DIR = CMakeFiles\Chess.dir
   OBJECT_FILE_DIR = CMakeFiles\Chess.dir
 
-build CMakeFiles/Chess.dir/piece.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/piece.cpp || cmake_object_order_depends_target_Chess
-  DEP_FILE = CMakeFiles\Chess.dir\piece.cpp.obj.d
+build CMakeFiles/Chess.dir/Core/piece.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/Core/piece.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\Core\piece.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Chess.dir
-  OBJECT_FILE_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir\Core
 
-build CMakeFiles/Chess.dir/board.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/board.cpp || cmake_object_order_depends_target_Chess
-  DEP_FILE = CMakeFiles\Chess.dir\board.cpp.obj.d
+build CMakeFiles/Chess.dir/Core/board.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/Core/board.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\Core\board.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Chess.dir
-  OBJECT_FILE_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir\Core
 
-build CMakeFiles/Chess.dir/move.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/move.cpp || cmake_object_order_depends_target_Chess
-  DEP_FILE = CMakeFiles\Chess.dir\move.cpp.obj.d
+build CMakeFiles/Chess.dir/Core/move.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/Core/move.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\Core\move.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Chess.dir
-  OBJECT_FILE_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir\Core
+
+build CMakeFiles/Chess.dir/Core/game.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/Core/game.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\Core\game.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir\Core
+
+build CMakeFiles/Chess.dir/Core/notation.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:/Users/Fores/CLionProjects/Chess/Core/notation.cpp || cmake_object_order_depends_target_Chess
+  DEP_FILE = CMakeFiles\Chess.dir\Core\notation.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Chess.dir
+  OBJECT_FILE_DIR = CMakeFiles\Chess.dir\Core
 
 
 # =============================================================================
@@ -81,7 +93,7 @@ build CMakeFiles/Chess.dir/move.cpp.obj: CXX_COMPILER__Chess_unscanned_Debug C$:
 #############################################
 # Link the executable Chess.exe
 
-build Chess.exe: CXX_EXECUTABLE_LINKER__Chess_Debug CMakeFiles/Chess.dir/main.cpp.obj CMakeFiles/Chess.dir/piece.cpp.obj CMakeFiles/Chess.dir/board.cpp.obj CMakeFiles/Chess.dir/move.cpp.obj
+build Chess.exe: CXX_EXECUTABLE_LINKER__Chess_Debug CMakeFiles/Chess.dir/main.cpp.obj CMakeFiles/Chess.dir/Core/piece.cpp.obj CMakeFiles/Chess.dir/Core/board.cpp.obj CMakeFiles/Chess.dir/Core/move.cpp.obj CMakeFiles/Chess.dir/Core/game.cpp.obj CMakeFiles/Chess.dir/Core/notation.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Chess.dir

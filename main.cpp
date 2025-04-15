@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
-#include "board.h"
-#include "move.h"
+#include "Core/board.h"
+#include "Core/move.h"
+#include "Core/game.h"
+#include "Core/notation.h"
 
 void printBoard(const Board& board) {
     std::cout << "  a b c d e f g h\n";
@@ -34,30 +36,24 @@ bool parseMove(const std::string& input, int& fromRow, int& fromCol, int& toRow,
 }
 
 int main() {
-    Board board;
-    Color currentTurn = Color::White;
+    Game game;
     std::string input;
-
-    while (true) {
-        printBoard(board);
-        std::cout << ((currentTurn == Color::White) ? "White" : "Black") << " to move (e.g. e2e4), or 'q' to quit: ";
+    while (!game.isGameOver()) {
+        printBoard(game.getBoard());
+        std::cout << ((game.getCurrentTurn() == Color::White) ? "White" : "Black") << " to move (e.g. e4, Ke2): ";
         std::cin >> input;
 
-        if (input == "q" || input == "quit")
+        if (input == "q" || input == "quit") {
+            game.endGame();
             break;
-
-        int fromRow, fromCol, toRow, toCol;
-        if (!parseMove(input, fromRow, fromCol, toRow, toCol)) {
-            std::cout << "Invalid input format. Use format like e2e4.\n";
-            continue;
         }
 
-        if (MoveHandler::tryMove(board, fromRow, fromCol, toRow, toCol, currentTurn)) {
-            currentTurn = (currentTurn == Color::White) ? Color::Black : Color::White;
-        } else {
-            std::cout << "Illegal move. Try again.\n";
+        ParsedMove move = Notation::parseMoveNotation(game, input);
+        if (!move.valid || !game.makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol)) {
+            std::cout << "Invalid move. Try again.\n";
         }
     }
+
 
     std::cout << "Game over.\n";
     return 0;

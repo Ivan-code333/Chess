@@ -1,10 +1,7 @@
 #include "move.h"
 #include <cmath>
 
-bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
-    if (!board.isInsideBoard(fromRow, fromCol) || !board.isInsideBoard(toRow, toCol))
-        return false;
-
+bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
     auto piece = board.getPiece(fromRow, fromCol);
     if (!piece || piece->getColor() != currentTurn)
         return false;
@@ -16,13 +13,13 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
     if (target && target->getColor() == currentTurn)
         return false;
 
-    // Проверка пути (кроме коня)
-    if (dynamic_cast<Knight*>(piece.get()) == nullptr) {
-        if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
-            return false;
-    }
+    return true;
+}
 
-    // Все проверки пройдены, делаем ход
+bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
+    if (!isMoveLegal(board, fromRow, fromCol, toRow, toCol, currentTurn))
+        return false;
+
     board.movePiece(fromRow, fromCol, toRow, toCol);
     return true;
 }

@@ -7,8 +7,9 @@
 
 class MoveHandler {
 public:
-    // Проверка и выполнение хода
+    static bool isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
     static bool tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
+
 
 private:
     static bool isPathClear(const Board& board, int fromRow, int fromCol, int toRow, int toCol);
