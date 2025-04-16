@@ -1,4 +1,5 @@
 #include "move.h"
+#include "piece.h"
 #include <cmath>
 
 bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
@@ -20,9 +21,22 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
     if (!isMoveLegal(board, fromRow, fromCol, toRow, toCol, currentTurn))
         return false;
 
+    auto piece = board.getPiece(fromRow, fromCol);
+    if (!piece) return false;
+
+    char symbol = piece->getSymbol();
+
+    // Проверка: если НЕ конь, то проверяем путь
+    if (symbol != 'N' && symbol != 'n') {
+        if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
+            return false;
+    }
+
     board.movePiece(fromRow, fromCol, toRow, toCol);
     return true;
 }
+
+
 
 // Проверка, что путь от from до to чист (по горизонтали, вертикали или диагонали)
 bool MoveHandler::isPathClear(const Board& board, int fromRow, int fromCol, int toRow, int toCol) {

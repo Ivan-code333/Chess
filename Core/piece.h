@@ -9,6 +9,7 @@ enum class Color {
     Black
 };
 
+
 class Piece {
 public:
     Piece(Color color) : color(color) {}
