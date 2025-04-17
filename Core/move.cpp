@@ -8,7 +8,7 @@ bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int 
         return false;
 
     if (!piece->isMoveLegal(fromRow, fromCol, toRow, toCol))
-        return false;
+       return false;
 
     auto target = board.getPiece(toRow, toCol);
     if (target && target->getColor() == currentTurn)
@@ -28,13 +28,12 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
 
     // === Обработка логики пешки ===
     if (symbol == 'P' || symbol == 'p') {
-        int direction = (currentTurn == Color::White) ? 1 : -1;
-        int startRow = (currentTurn == Color::White) ? 1 : 6;
+        int direction = (currentTurn == Color::White) ? -1 : 1;
+        int startRow = (currentTurn == Color::White) ? 6 : 1;
         int rowDiff = toRow - fromRow;
         int colDiff = toCol - fromCol;
         auto destPiece = board.getPiece(toRow, toCol);
-
-        // Пешка бьёт по диагонали — проверка есть ли вражеская фигура
+// Пешка бьёт по диагонали — проверка есть ли вражеская фигура
         if (std::abs(colDiff) == 1 && rowDiff == direction) {
             if (!destPiece || destPiece->getColor() == currentTurn) {
                 return false; // нельзя бить пустое поле или союзника
@@ -44,12 +43,20 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
 
         // Пешка ходит вперёд — только если клетка пуста
         if (colDiff == 0) {
-            if (!board.isEmpty(toRow, toCol)) return false;
+            if (!board.isEmpty(toRow, toCol))
+                return false;
 
-            // На 2 клетки — только с начальной позиции и обе клетки пусты
-            if (rowDiff == 2 * direction) {
+            if (rowDiff == direction) {
+                // один шаг вперёд — всё ок
+            }
+            else if (rowDiff == 2 * direction) {
+                // два шага — только с начальной позиции и обе клетки пусты
                 if (fromRow != startRow || !board.isEmpty(fromRow + direction, fromCol))
                     return false;
+            }
+            else {
+                // любой другой вертикальный ход — нелегален
+                return false;
             }
         }
     }
