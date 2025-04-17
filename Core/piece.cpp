@@ -9,15 +9,26 @@ char Pawn::getSymbol() const {
 }
 
 bool Pawn::isMoveLegal(int fromRow, int fromCol, int toRow, int toCol) const {
-    // Пока без шахов, взятий и превращений
     int direction = (color == Color::White) ? -1 : 1;
-    if (fromCol == toCol) {
-        if (toRow - fromRow == direction) return true;
+    int rowDiff = toRow - fromRow;
+    int colDiff = toCol - fromCol;
+
+    
+    if (std::abs(colDiff) == 1 && rowDiff == direction)
+        return true;
+
+    if (colDiff == 0 && rowDiff == direction)
+        return true;
+
+    if (colDiff == 0) {
         if ((color == Color::White && fromRow == 6 && toRow == 4) ||
-            (color == Color::Black && fromRow == 1 && toRow == 3)) return true;
+            (color == Color::Black && fromRow == 1 && toRow == 3))
+            return true;
     }
+
     return false;
 }
+
 
 // --- Knight ---
 Knight::Knight(Color color) : Piece(color) {}
