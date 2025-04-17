@@ -58,3 +58,6 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
 bool Board::isInsideBoard(int row, int col) const {
     return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
 }
+bool Board::isEmpty(int row, int col) const {
+    return !grid[row][col];  // если nullptr — значит клетка пуста
+}

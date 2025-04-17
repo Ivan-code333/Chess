@@ -26,8 +26,36 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
 
     char symbol = piece->getSymbol();
 
-    // Проверка: если НЕ конь, то проверяем путь
-    if (symbol != 'N' && symbol != 'n') {
+    // === Обработка логики пешки ===
+    if (symbol == 'P' || symbol == 'p') {
+        int direction = (currentTurn == Color::White) ? 1 : -1;
+        int startRow = (currentTurn == Color::White) ? 1 : 6;
+        int rowDiff = toRow - fromRow;
+        int colDiff = toCol - fromCol;
+        auto destPiece = board.getPiece(toRow, toCol);
+
+        // Пешка бьёт по диагонали — проверка есть ли вражеская фигура
+        if (std::abs(colDiff) == 1 && rowDiff == direction) {
+            if (!destPiece || destPiece->getColor() == currentTurn) {
+                return false; // нельзя бить пустое поле или союзника
+            }
+        }
+
+
+        // Пешка ходит вперёд — только если клетка пуста
+        if (colDiff == 0) {
+            if (!board.isEmpty(toRow, toCol)) return false;
+
+            // На 2 клетки — только с начальной позиции и обе клетки пусты
+            if (rowDiff == 2 * direction) {
+                if (fromRow != startRow || !board.isEmpty(fromRow + direction, fromCol))
+                    return false;
+            }
+        }
+    }
+
+    // === Общая проверка для остальных фигур (кроме коня) ===
+    if (symbol != 'N' && symbol != 'n' && symbol != 'P' && symbol != 'p') {
         if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
             return false;
     }
@@ -35,6 +63,7 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
     board.movePiece(fromRow, fromCol, toRow, toCol);
     return true;
 }
+
 
 
 

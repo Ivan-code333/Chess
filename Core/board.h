@@ -20,6 +20,7 @@ public:
     std::shared_ptr<Piece> getPiece(int row, int col) const;
     void setPiece(int row, int col, std::shared_ptr<Piece> piece);
     void movePiece(int fromRow, int fromCol, int toRow, int toCol);
+    bool isEmpty(int row, int col) const;
 
     bool isInsideBoard(int row, int col) const;
 
