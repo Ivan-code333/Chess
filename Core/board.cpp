@@ -61,3 +61,4 @@ bool Board::isInsideBoard(int row, int col) const {
 bool Board::isEmpty(int row, int col) const {
     return !grid[row][col];  // если nullptr — значит клетка пуста
 }
+

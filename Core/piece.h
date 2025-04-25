@@ -21,6 +21,8 @@ public:
     // В будущем сюда добавим проверку легальности хода
     virtual bool isMoveLegal(int fromRow, int fromCol, int toRow, int toCol) const = 0;
 
+
+
 protected:
     Color color;
 };

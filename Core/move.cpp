@@ -14,6 +14,12 @@ bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int 
     if (target && target->getColor() == currentTurn)
         return false;
 
+    Board temp = board;
+    temp.movePiece(fromRow, fromCol, toRow, toCol);
+
+    if (isKingInCheck(temp, currentTurn))
+        return false;
+
     return true;
 }
 
@@ -89,3 +95,76 @@ bool MoveHandler::isPathClear(const Board& board, int fromRow, int fromCol, int 
     }
     return true;
 }
+
+bool MoveHandler::isKingInCheck(const Board& board, Color kingColor) {
+    int kingRow = -1, kingCol = -1;
+
+    // Найти короля
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            auto piece = board.getPiece(row, col);
+            if (piece && piece->getColor() == kingColor) {
+                char symbol = piece->getSymbol();
+                if ((kingColor == Color::White && symbol == 'K') ||
+                    (kingColor == Color::Black && symbol == 'k')) {
+                    kingRow = row;
+                    kingCol = col;
+                    break;
+                    }
+            }
+        }
+    }
+
+    if (kingRow == -1 || kingCol == -1)
+        return false; // Король не найден
+
+    // Проверить, атакует ли кто-то короля
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            auto piece = board.getPiece(row, col);
+            if (piece && piece->getColor() != kingColor) {
+                if (piece->isMoveLegal(row, col, kingRow, kingCol) &&
+                    isPathClear(board, row, col, kingRow, kingCol)) {
+                    return true;
+                    }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool MoveHandler::hasLegalMoves(const Board& board, Color turn) {
+    for (int fromRow = 0; fromRow < BOARD_SIZE; ++fromRow) {
+        for (int fromCol = 0; fromCol < BOARD_SIZE; ++fromCol) {
+            auto piece = board.getPiece(fromRow, fromCol);
+            if (!piece || piece->getColor() != turn)
+                continue;
+
+            for (int toRow = 0; toRow < BOARD_SIZE; ++toRow) {
+                for (int toCol = 0; toCol < BOARD_SIZE; ++toCol) {
+                    if (fromRow == toRow && fromCol == toCol)
+                        continue;
+
+                    if (!piece->isMoveLegal(fromRow, fromCol, toRow, toCol))
+                        continue;
+
+                    if (!isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
+                        continue;
+
+                    // Создаём временный ход на доске
+                    auto tempBoard = board; // создаем копию доски
+                    tempBoard.movePiece(fromRow, fromCol, toRow, toCol); // выполняем ход
+
+                    // Проверяем, не оказался ли король под шахом
+                    if (!isKingInCheck(tempBoard, turn)) {
+                        return true; // Есть хотя бы один легальный ход
+                    }
+                }
+            }
+        }
+    }
+    return false; // Нет легальных ходов
+}
+
+
