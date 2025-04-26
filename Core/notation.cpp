@@ -13,62 +13,46 @@ bool isPieceChar(char c) {
 ParsedMove Notation::parseMoveNotation(const Game& game, const std::string& input) {
     ParsedMove result{ -1, -1, -1, -1, false };
 
-    if (input.length() < 2 || input.length() > 3)
+    // Поддерживаем только строку ровно из 4 символов: fromFile, fromRank, toFile, toRank
+    if (input.length() != 4)
         return result;
 
-    char fileChar = input[input.length() - 2];
-    char rankChar = input[input.length() - 1];
-    if (fileChar < 'a' || fileChar > 'h' || rankChar < '1' || rankChar > '8')
-        return result;
+    char fFile = input[0], fRank = input[1];
+    char tFile = input[2], tRank = input[3];
 
-    int toCol = fileChar - 'a';
-    int toRow = 8 - (rankChar - '0');
+    // Проверяем, что всё в диапазоне a–h и 1–8
+    if (fFile < 'a' || fFile > 'h' ||
+        tFile < 'a' || tFile > 'h' ||
+        fRank < '1' || fRank > '8' ||
+        tRank < '1' || tRank > '8')
+    {
+        return result;
+    }
+
+    int fromCol = fFile - 'a';
+    int fromRow = 8 - (fRank - '0');
+    int toCol = tFile - 'a';
+    int toRow = 8 - (tRank - '0');
 
     const Board& board = game.getBoard();
     Color turn = game.getCurrentTurn();
 
-    char pieceChar = (input.length() == 3) ? input[0] : 'P'; // Пешка по умолчанию
+    // Проверяем, что на from стоит фигура своего цвета
+    auto piece = board.getPiece(fromRow, fromCol);
+    if (!piece || piece->getColor() != turn)
+        return result;
 
-    // Ищем фигуру игрока, которая может пойти туда
-    for (int row = 0; row < BOARD_SIZE; ++row) {
-        for (int col = 0; col < BOARD_SIZE; ++col) {
-            auto piece = board.getPiece(row, col);
-            if (!piece || piece->getColor() != turn) continue;
-
-            char symbol = piece->getSymbol();
-            if (symbol >= 'a' && symbol <= 'z') symbol -= 32; // к верхнему регистру
-
-            if ((pieceChar == 'P' && symbol == 'P') || (symbol == pieceChar)) {
-                // Для пешки: если это диагональный ход, то можно только при захвате
-                if (symbol == 'P') {
-                    int colDiff = toCol - col;
-                    int rowDiff = toRow - row;
-                    if (colDiff != 0) {
-                        // ожидалось colDiff == ±1 и захват
-                        if (std::abs(colDiff) == 1 && rowDiff == ((turn == Color::White) ? -1 : 1)) {
-                            auto dest = board.getPiece(toRow, toCol);
-                            if (!dest || dest->getColor() == turn)
-                                continue;
-                        }
-                        else {
-                            // любой другой диагональный/горизонтальный ход — пропускаем
-                            continue;
-                        }
-                    }
-                }
-
-                if (piece->isMoveLegal(row, col, toRow, toCol) &&
-                    MoveHandler::isMoveLegal(board, row, col, toRow, toCol, turn)) {
-                    result.fromRow = row;
-                    result.fromCol = col;
-                    result.toRow = toRow;
-                    result.toCol = toCol;
-                    result.valid = true;
-                    return result;
-                }
-            }
-        }
+    // Проверяем легальность хода
+    if (piece->isMoveLegal(fromRow, fromCol, toRow, toCol) &&
+        MoveHandler::isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
+    {
+        result.fromRow = fromRow;
+        result.fromCol = fromCol;
+        result.toRow = toRow;
+        result.toCol = toCol;
+        result.valid = true;
     }
 
-    return result; // ничего не нашли
+    return result;
 }
+
