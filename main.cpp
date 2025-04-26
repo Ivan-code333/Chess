@@ -40,7 +40,7 @@ int main() {
     std::string input;
     while (!game.isGameOver()) {
         printBoard(game.getBoard());
-        std::cout << ((game.getCurrentTurn() == Color::White) ? "White" : "Black") << " to move (e.g. e4, Ke2): ";
+        std::cout << ((game.getCurrentTurn() == Color::White) ? "White" : "Black")<< " to move (e.g. e2e4): ";
         std::cin >> input;
 
         if (input == "q" || input == "quit") {
