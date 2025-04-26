@@ -2,21 +2,55 @@
 #include "piece.h"
 #include <cmath>
 
-bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn) {
+bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol,int toRow, int toCol,Color currentTurn)
+{
     auto piece = board.getPiece(fromRow, fromCol);
     if (!piece || piece->getColor() != currentTurn)
         return false;
 
     if (!piece->isMoveLegal(fromRow, fromCol, toRow, toCol))
-       return false;
+        return false;
 
     auto target = board.getPiece(toRow, toCol);
     if (target && target->getColor() == currentTurn)
         return false;
 
+    // Логика пешки:
+    char symbol = piece->getSymbol();
+    if (symbol == 'P' || symbol == 'p') {
+        int direction = (symbol == 'P') ? -1 : 1;
+        int rowDiff = toRow - fromRow;
+        int colDiff = toCol - fromCol;
+        auto destPiece = board.getPiece(toRow, toCol);
+        // диагональное взятие
+        if (std::abs(colDiff) == 1 && rowDiff == direction) {
+            if (!destPiece || destPiece->getColor() == currentTurn)
+                return false;
+        }
+        // прямой ход
+        if (colDiff == 0) {
+            if (!board.isEmpty(toRow, toCol))
+                return false;
+            if (std::abs(rowDiff) == 2) {
+                int startRow = (symbol == 'P') ? 6 : 1;
+                if (fromRow != startRow || !board.isEmpty(fromRow + direction, fromCol))
+                    return false;
+            }
+            else if (std::abs(rowDiff) != 1) {
+                return false;
+            }
+        }
+    }
+
+    // Проверка, что путь свободен (для всех фигур, кроме коня и пешки)
+    if (symbol != 'N' && symbol != 'n' && symbol != 'P' && symbol != 'p') {
+        if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
+            return false;
+    }
+
+    // Симулируем ход и проверяем, не остаётся ли король под шахом
     Board temp = board;
     temp.movePiece(fromRow, fromCol, toRow, toCol);
-
     if (isKingInCheck(temp, currentTurn))
         return false;
 
@@ -146,10 +180,7 @@ bool MoveHandler::hasLegalMoves(const Board& board, Color turn) {
                     if (fromRow == toRow && fromCol == toCol)
                         continue;
 
-                    if (!piece->isMoveLegal(fromRow, fromCol, toRow, toCol))
-                        continue;
-
-                    if (!isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
+                    if (!MoveHandler::isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
                         continue;
 
                     // Создаём временный ход на доске
