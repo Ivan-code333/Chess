@@ -1,7 +1,9 @@
 #include "move.h"
 #include "piece.h"
 #include <cmath>
+
 #include <iostream>
+
 bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn)
 {
     auto piece = board.getPiece(fromRow, fromCol);
@@ -94,6 +96,7 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
         int colDiff = toCol - fromCol;
         auto destPiece = board.getPiece(toRow, toCol);
 
+
         
         if (std::abs(colDiff) == 1 && rowDiff == direction && !destPiece) {
             const LastMove& lm = board.getLastMove();
@@ -126,11 +129,14 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
             case 'R': promoted = std::make_shared<Rook>(currentTurn); break;
             case 'B': promoted = std::make_shared<Bishop>(currentTurn); break;
             case 'N': promoted = std::make_shared<Knight>(currentTurn); break;
+
             }
+
 
             board.setPiece(toRow, toCol, promoted);
         }
     }
+
     return true;
 }
 
