@@ -2,7 +2,7 @@
 #include "piece.h"
 #include <cmath>
 
-bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol,int toRow, int toCol,Color currentTurn)
+bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn)
 {
     auto piece = board.getPiece(fromRow, fromCol);
     if (!piece || piece->getColor() != currentTurn)
@@ -22,10 +22,23 @@ bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol,int t
         int rowDiff = toRow - fromRow;
         int colDiff = toCol - fromCol;
         auto destPiece = board.getPiece(toRow, toCol);
-        // диагональное взятие
+
+        // диагональное взятие (обычное или на проходе)
         if (std::abs(colDiff) == 1 && rowDiff == direction) {
-            if (!destPiece || destPiece->getColor() == currentTurn)
-                return false;
+            // обычное взятие
+            if (destPiece && destPiece->getColor() != currentTurn)
+                return true;
+            // взятие на проходе: клетка прицела пуста, но соседняя пешка сделала ход в 2 клетки
+            const LastMove& lm = board.getLastMove();
+            if (!destPiece &&
+                lm.toRow == fromRow &&
+                lm.toCol == toCol &&
+                std::abs(lm.fromRow - lm.toRow) == 2) {
+                auto jumped = board.getPiece(lm.toRow, lm.toCol);
+                if (jumped && jumped->getSymbol() != symbol && jumped->getColor() != currentTurn)
+                    return true;
+            }
+            return false;
         }
         // прямой ход
         if (colDiff == 0) {
@@ -50,6 +63,14 @@ bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol,int t
 
     // Симулируем ход и проверяем, не остаётся ли король под шахом
     Board temp = board;
+    if (symbol == 'P' || symbol == 'p') {
+        int colDiff = toCol - fromCol;
+        if (colDiff != 0 && board.isEmpty(toRow, toCol)) {
+            
+            const LastMove& lm = board.getLastMove();
+            temp.setPiece(lm.toRow, lm.toCol, nullptr);
+        }
+    }
     temp.movePiece(fromRow, fromCol, toRow, toCol);
     if (isKingInCheck(temp, currentTurn))
         return false;
@@ -69,49 +90,24 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
     // === Обработка логики пешки ===
     if (symbol == 'P' || symbol == 'p') {
         int direction = (currentTurn == Color::White) ? -1 : 1;
-        int startRow = (currentTurn == Color::White) ? 6 : 1;
         int rowDiff = toRow - fromRow;
         int colDiff = toCol - fromCol;
         auto destPiece = board.getPiece(toRow, toCol);
-// Пешка бьёт по диагонали — проверка есть ли вражеская фигура
-        if (std::abs(colDiff) == 1 && rowDiff == direction) {
-            if (!destPiece || destPiece->getColor() == currentTurn) {
-                return false; // нельзя бить пустое поле или союзника
-            }
-        }
 
-
-        // Пешка ходит вперёд — только если клетка пуста
-        if (colDiff == 0) {
-            if (!board.isEmpty(toRow, toCol))
-                return false;
-
-            if (rowDiff == direction) {
-                // один шаг вперёд — всё ок
-            }
-            else if (rowDiff == 2 * direction) {
-                // два шага — только с начальной позиции и обе клетки пусты
-                if (fromRow != startRow || !board.isEmpty(fromRow + direction, fromCol))
-                    return false;
-            }
-            else {
-                // любой другой вертикальный ход — нелегален
-                return false;
+        
+        if (std::abs(colDiff) == 1 && rowDiff == direction && !destPiece) {
+            const LastMove& lm = board.getLastMove();
+            if (lm.toRow == fromRow && lm.toCol == toCol && std::abs(lm.fromRow - lm.toRow) == 2) {
+                // удаляем побитую пешку
+                board.setPiece(lm.toRow, lm.toCol, nullptr);
             }
         }
     }
 
-    // === Общая проверка для остальных фигур (кроме коня) ===
-    if (symbol != 'N' && symbol != 'n' && symbol != 'P' && symbol != 'p') {
-        if (!isPathClear(board, fromRow, fromCol, toRow, toCol))
-            return false;
-    }
-
+    // Стандартный ход (включая обычное взятие)
     board.movePiece(fromRow, fromCol, toRow, toCol);
     return true;
 }
-
-
 
 
 // Проверка, что путь от from до to чист (по горизонтали, вертикали или диагонали)
@@ -144,7 +140,7 @@ bool MoveHandler::isKingInCheck(const Board& board, Color kingColor) {
                     kingRow = row;
                     kingCol = col;
                     break;
-                    }
+                }
             }
         }
     }
@@ -160,7 +156,7 @@ bool MoveHandler::isKingInCheck(const Board& board, Color kingColor) {
                 if (piece->isMoveLegal(row, col, kingRow, kingCol) &&
                     isPathClear(board, row, col, kingRow, kingCol)) {
                     return true;
-                    }
+                }
             }
         }
     }
@@ -183,19 +179,14 @@ bool MoveHandler::hasLegalMoves(const Board& board, Color turn) {
                     if (!MoveHandler::isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
                         continue;
 
-                    // Создаём временный ход на доске
-                    auto tempBoard = board; // создаем копию доски
-                    tempBoard.movePiece(fromRow, fromCol, toRow, toCol); // выполняем ход
-
-                    // Проверяем, не оказался ли король под шахом
+                    auto tempBoard = board;
+                    tempBoard.movePiece(fromRow, fromCol, toRow, toCol);
                     if (!isKingInCheck(tempBoard, turn)) {
-                        return true; // Есть хотя бы один легальный ход
+                        return true;
                     }
                 }
             }
         }
     }
-    return false; // Нет легальных ходов
+    return false;
 }
-
-
