@@ -4,6 +4,8 @@
 Board::Board() {
     grid.resize(BOARD_SIZE, std::vector<std::shared_ptr<Piece>>(BOARD_SIZE, nullptr));
     reset();
+    // Инициализируем lastMove нулевыми значениями
+    lastMove = { -1, -1, -1, -1 };
 }
 
 void Board::reset() {
@@ -36,6 +38,9 @@ void Board::reset() {
     grid[7][7] = std::make_shared<Rook>(Color::White);
     for (int col = 0; col < BOARD_SIZE; ++col)
         grid[6][col] = std::make_shared<Pawn>(Color::White);
+
+    // Сброс lastMove при новой игре
+    lastMove = { -1, -1, -1, -1 };
 }
 
 std::shared_ptr<Piece> Board::getPiece(int row, int col) const {
@@ -51,6 +56,9 @@ void Board::setPiece(int row, int col, std::shared_ptr<Piece> piece) {
 void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     if (!isInsideBoard(fromRow, fromCol) || !isInsideBoard(toRow, toCol))
         return;
+    // Сохраняем информацию о ходе
+    lastMove = { fromRow, fromCol, toRow, toCol };
+    // Перемещение
     grid[toRow][toCol] = grid[fromRow][fromCol];
     grid[fromRow][fromCol] = nullptr;
 }
@@ -62,3 +70,6 @@ bool Board::isEmpty(int row, int col) const {
     return !grid[row][col];  // если nullptr — значит клетка пуста
 }
 
+const LastMove& Board::getLastMove() const {
+    return lastMove;
+}
