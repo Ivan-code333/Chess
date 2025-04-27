@@ -2,6 +2,8 @@
 #include "piece.h"
 #include <cmath>
 
+#include <iostream>
+
 bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn)
 {
     auto piece = board.getPiece(fromRow, fromCol);
@@ -94,6 +96,7 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
         int colDiff = toCol - fromCol;
         auto destPiece = board.getPiece(toRow, toCol);
 
+
         
         if (std::abs(colDiff) == 1 && rowDiff == direction && !destPiece) {
             const LastMove& lm = board.getLastMove();
@@ -106,6 +109,34 @@ bool MoveHandler::tryMove(Board& board, int fromRow, int fromCol, int toRow, int
 
     // Стандартный ход (включая обычное взятие)
     board.movePiece(fromRow, fromCol, toRow, toCol);
+
+    // Превращение пешки с выбором фигуры 
+    if (symbol == 'P' || symbol == 'p') {
+        if ((currentTurn == Color::White && toRow == 0) ||
+            (currentTurn == Color::Black && toRow == 7)) {
+
+            char choice;
+            do {
+                std::cout << "Choose a chess piece (Q, R, B, N): ";
+                std::cin >> choice;
+                choice = toupper(choice);
+            } while (choice != 'Q' && choice != 'R' && choice != 'B' && choice != 'N');
+
+            std::shared_ptr<Piece> promoted;
+
+            switch (choice) {
+            case 'Q': promoted = std::make_shared<Queen>(currentTurn); break;
+            case 'R': promoted = std::make_shared<Rook>(currentTurn); break;
+            case 'B': promoted = std::make_shared<Bishop>(currentTurn); break;
+            case 'N': promoted = std::make_shared<Knight>(currentTurn); break;
+
+            }
+
+
+            board.setPiece(toRow, toCol, promoted);
+        }
+    }
+
     return true;
 }
 
