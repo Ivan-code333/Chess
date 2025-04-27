@@ -12,14 +12,6 @@
 
 const int BOARD_SIZE = 8;
 
-// Хранит информацию о последнем ходе
-struct LastMove {
-    int fromRow;
-    int fromCol;
-    int toRow;
-    int toCol;
-};
-
 class Board {
 public:
     Board();
@@ -32,14 +24,8 @@ public:
 
     bool isInsideBoard(int row, int col) const;
 
-    // Получить информацию о последнем ходе
-    const LastMove& getLastMove() const;
-
 private:
     std::vector<std::vector<std::shared_ptr<Piece>>> grid;
-
-    // Информация о последнем ходе для реализации взятия на проходе
-    LastMove lastMove;
 };
 
 #endif // BOARD_H
