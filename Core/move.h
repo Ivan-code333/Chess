@@ -7,8 +7,10 @@
 
 class MoveHandler {
 public:
-    static bool isMoveLegal(const Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
-    static bool tryMove(Board& board, int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
+    static bool isMoveLegal(const Board& board,
+        int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
+    static bool tryMove(Board& board,
+        int fromRow, int fromCol, int toRow, int toCol, Color currentTurn);
     static bool isKingInCheck(const Board& board, Color kingColor);
     static bool hasLegalMoves(const Board& board, Color turn);
 

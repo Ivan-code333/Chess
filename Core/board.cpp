@@ -1,11 +1,15 @@
 #include "board.h"
 #include "piece.h"
+#include <cmath>
 
 Board::Board() {
     grid.resize(BOARD_SIZE, std::vector<std::shared_ptr<Piece>>(BOARD_SIZE, nullptr));
     reset();
     // Инициализируем lastMove нулевыми значениями
     lastMove = { -1, -1, -1, -1 };
+    kingMoved[0] = kingMoved[1] = false;
+    rookMoved[0][0] = rookMoved[0][1] = false;
+    rookMoved[1][0] = rookMoved[1][1] = false;
 }
 
 void Board::reset() {
@@ -41,6 +45,9 @@ void Board::reset() {
 
     // Сброс lastMove при новой игре
     lastMove = { -1, -1, -1, -1 };
+    kingMoved[0] = kingMoved[1] = false;
+    rookMoved[0][0] = rookMoved[0][1] = false;
+    rookMoved[1][0] = rookMoved[1][1] = false;
 }
 
 std::shared_ptr<Piece> Board::getPiece(int row, int col) const {
@@ -57,9 +64,35 @@ void Board::movePiece(int fromRow, int fromCol, int toRow, int toCol) {
     if (!isInsideBoard(fromRow, fromCol) || !isInsideBoard(toRow, toCol))
         return;
     // Сохраняем информацию о ходе
+    auto piece = grid[fromRow][fromCol];
+    if (!piece) return;
+
+    int ci = (piece->getColor() == Color::White) ? 0 : 1;
+    // Рокировка
+    if ((piece->getSymbol() == 'K' || piece->getSymbol() == 'k') && std::abs(toCol - fromCol) == 2) {
+        kingMoved[ci] = true;
+        bool kingSide = (toCol > fromCol);
+        grid[toRow][toCol] = piece;
+        grid[fromRow][fromCol] = nullptr;
+        int rookFromCol = kingSide ? BOARD_SIZE - 1 : 0;
+        int rookToCol = kingSide ? toCol - 1 : toCol + 1;
+        auto rook = grid[fromRow][rookFromCol];
+        grid[fromRow][rookFromCol] = nullptr;
+        grid[fromRow][rookToCol] = rook;
+        rookMoved[ci][kingSide ? 1 : 0] = true;
+        lastMove = { fromRow, fromCol, toRow, toCol };
+        return;
+    }
+
+    if (piece->getSymbol() == 'K' || piece->getSymbol() == 'k') kingMoved[ci] = true;
+    if (piece->getSymbol() == 'R' || piece->getSymbol() == 'r') {
+        int side = (fromCol == 0) ? 0 : ((fromCol == BOARD_SIZE - 1) ? 1 : -1);
+        if (side != -1) rookMoved[ci][side] = true;
+    }
+
     lastMove = { fromRow, fromCol, toRow, toCol };
     // Перемещение
-    grid[toRow][toCol] = grid[fromRow][fromCol];
+    grid[toRow][toCol] = piece;
     grid[fromRow][fromCol] = nullptr;
 }
 
@@ -72,4 +105,20 @@ bool Board::isEmpty(int row, int col) const {
 
 const LastMove& Board::getLastMove() const {
     return lastMove;
+}
+
+bool Board::canCastleKingSide(Color color) const {
+    int ci = (color == Color::White) ? 0 : 1;
+    if (kingMoved[ci] || rookMoved[ci][1]) return false;
+    int row = (color == Color::White) ? 7 : 0;
+    if (!isEmpty(row, 5) || !isEmpty(row, 6)) return false;
+    return true;
+}
+
+bool Board::canCastleQueenSide(Color color) const {
+    int ci = (color == Color::White) ? 0 : 1;
+    if (kingMoved[ci] || rookMoved[ci][0]) return false;
+    int row = (color == Color::White) ? 7 : 0;
+    if (!isEmpty(row, 1) || !isEmpty(row, 2) || !isEmpty(row, 3)) return false;
+    return true;
 }
