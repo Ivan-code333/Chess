@@ -80,10 +80,11 @@ bool Queen::isMoveLegal(int fromRow, int fromCol, int toRow, int toCol) const {
 // --- King ---
 King::King(Color color) : Piece(color) {}
 
-char King::getSymbol() const {
-    return (color == Color::White) ? 'K' : 'k';
-}
+char King::getSymbol() const { return(color == Color::White) ? 'K' : 'k'; }
 
-bool King::isMoveLegal(int fromRow, int fromCol, int toRow, int toCol) const {
-    return std::abs(fromRow - toRow) <= 1 && std::abs(fromCol - toCol) <= 1;
+bool King::isMoveLegal(int fr, int fc, int tr, int tc)const {
+    int dr = std::abs(fr - tr), dc = std::abs(fc - tc);
+    if (dr <= 1 && dc <= 1) return true;
+    if (dr == 0 && dc == 2) return true; // рокировка
+    return false;
 }

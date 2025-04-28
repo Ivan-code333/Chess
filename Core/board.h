@@ -1,9 +1,4 @@
-/*Это заголовочный файл класса Board, который описывает шахматную доску,
- то есть хранит фигуры, предоставляет доступ к ним, и реализует перемещения.*/
-
-
 #ifndef BOARD_H
-
 #define BOARD_H
 
 #include <vector>
@@ -35,11 +30,19 @@ public:
     // Получить информацию о последнем ходе
     const LastMove& getLastMove() const;
 
+    // Проверка возможности рокировки
+    bool canCastleKingSide(Color color) const;
+    bool canCastleQueenSide(Color color) const;
+
 private:
     std::vector<std::vector<std::shared_ptr<Piece>>> grid;
-
-    // Информация о последнем ходе для реализации взятия на проходе
+    
+    // Для взятия на проходе
     LastMove lastMove;
+
+    // Для рокировки
+    bool kingMoved[2];        
+    bool rookMoved[2][2];     
 };
 
 #endif // BOARD_H
