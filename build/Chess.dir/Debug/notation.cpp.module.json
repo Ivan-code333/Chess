@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Chess.dir\\Debug\\notation.obj",
+            "outputs": [
+                "C:\\Chess\\build\\Chess.dir\\Debug\\vc143.pdb",
+                "Chess.dir\\Debug\\"
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+^C:\CHESS\BUILD\CMAKEFILES\7C08FF964CE730CFC666232B0345FE23\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Chess -BC:/Chess/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Chess/build/Chess.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
