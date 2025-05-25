@@ -1,0 +1,27 @@
+# Папки сборки
+build/
+out/
+cmake-build-*/
+
+# Файлы IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# Бинарные файлы
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+
+# CMake файлы
+CMakeCache.txt
+CMakeFiles/
+*.cmake 

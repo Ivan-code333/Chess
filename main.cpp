@@ -44,7 +44,7 @@ int main() {
     const int windowWidth = boardPx + panelWidth;
     const int windowHeight = boardPx;
 
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Шахматы");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setFramerateLimit(60);
 
     // Цвета клеток
@@ -56,7 +56,7 @@ int main() {
 
     // Шрифт для текста
     sf::Font font;
-    font.loadFromFile("font.ttf");
+    font.loadFromFile("PragmaticaBoldReg.otf");
     
     // Кнопки
     sf::RectangleShape flipBtn(sf::Vector2f(panelWidth-40, 40));
