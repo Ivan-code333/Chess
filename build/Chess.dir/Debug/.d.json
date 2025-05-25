@@ -121,6 +121,7 @@
             "c:\\chess\\core\\move.h",
             "c:\\chess\\core\\game.h",
             "c:\\chess\\core\\notation.h",
+            "c:\\chess\\font.h",
             "c:\\sfml-2.6.1\\include\\sfml\\graphics.hpp",
             "c:\\sfml-2.6.1\\include\\sfml\\window.hpp",
             "c:\\sfml-2.6.1\\include\\sfml\\system.hpp",

@@ -4,6 +4,7 @@
 #include "Core/move.h"
 #include "Core/game.h"
 #include "Core/notation.h"
+#include "Font.h"
 #include <SFML/Graphics.hpp>
 
 void printBoard(const Board& board) {
@@ -44,7 +45,7 @@ int main() {
     const int windowWidth = boardPx + panelWidth;
     const int windowHeight = boardPx;
 
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Шахматы");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setFramerateLimit(60);
 
     // Цвета клеток
@@ -56,7 +57,10 @@ int main() {
 
     // Шрифт для текста
     sf::Font font;
-    font.loadFromFile("font.ttf");
+    if (!font.loadFromMemory(font_data, font_data_size)) {
+        std::cerr << "Ошибка загрузки шрифта из памяти!\n";
+        return -1; // Выход при ошибке загрузки шрифта
+    }
     
     // Кнопки
     sf::RectangleShape flipBtn(sf::Vector2f(panelWidth-40, 40));
