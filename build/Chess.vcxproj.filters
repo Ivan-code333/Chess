@@ -4,10 +4,10 @@
     <ClCompile Include="C:\Chess\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Chess\Core\piece.cpp">
+    <ClCompile Include="C:\Chess\Core\board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Chess\Core\board.cpp">
+    <ClCompile Include="C:\Chess\Core\piece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Chess\Core\move.cpp">
@@ -19,12 +19,15 @@
     <ClCompile Include="C:\Chess\Core\notation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Chess\Core\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Chess\Core\piece.h">
+    <ClInclude Include="C:\Chess\Core\board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Chess\Core\board.h">
+    <ClInclude Include="C:\Chess\Core\piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Chess\Core\move.h">
@@ -34,6 +37,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Chess\Core\notation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Chess\Core\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Chess\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

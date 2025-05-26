@@ -4,6 +4,7 @@
 #include "Core/move.h"
 #include "Core/game.h"
 #include "Core/notation.h"
+#include "Core/renderer.h"
 #include "Font.h"
 #include <SFML/Graphics.hpp>
 
@@ -48,25 +49,28 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setFramerateLimit(60);
 
-    // Цвета клеток
-    sf::Color lightColor(240, 217, 181);
-    sf::Color darkColor(181, 136, 99);
-    sf::Color panelColor(245, 241, 235);
-    sf::Color buttonColor(245, 241, 235);
-    sf::Color buttonOutline(220, 210, 200);
-
-    // Шрифт для текста
+    // Инициализация шрифта
     sf::Font font;
     if (!font.loadFromMemory(font_data, font_data_size)) {
         std::cerr << "Ошибка загрузки шрифта из памяти!\n";
-        return -1; // Выход при ошибке загрузки шрифта
+        return -1;
     }
+
+    // Создаем рендерер
+    // TODO: Замените "path/to/your/spritesheet.png" на актуальный путь к вашему файлу спрайтшита
+    // TODO: Замените sf::Vector2i(100, 100) на реальный размер одной фигуры на спрайтшите
+    ChessRenderer renderer(window, "C:/Chess/assets/pieces/Texture.png", sf::Vector2i(80, 80));
     
+    // Создаем игру
+    Game game;
+    game.reset(); // Вызываем reset на объекте game
+    const Board& board = game.getBoard(); // Получаем константную ссылку после сброса
+
     // Кнопки
     sf::RectangleShape flipBtn(sf::Vector2f(panelWidth-40, 40));
     flipBtn.setPosition(boardPx+20, 300);
-    flipBtn.setFillColor(buttonColor);
-    flipBtn.setOutlineColor(buttonOutline);
+    flipBtn.setFillColor(sf::Color(245, 241, 235));
+    flipBtn.setOutlineColor(sf::Color(220, 210, 200));
     flipBtn.setOutlineThickness(2);
 
     sf::RectangleShape resignBtn = flipBtn;
@@ -74,7 +78,7 @@ int main() {
     sf::RectangleShape drawBtn = flipBtn;
     drawBtn.setPosition(boardPx+20, 400);
 
-    sf::Text flipText("Flip Board", font, 22);
+    sf::Text flipText("Flip board", font, 22);
     flipText.setFillColor(sf::Color(80,80,80));
     flipText.setPosition(boardPx+40, 308);
     sf::Text resignText("Resign", font, 22);
@@ -84,9 +88,6 @@ int main() {
     drawText.setFillColor(sf::Color(80,80,80));
     drawText.setPosition(boardPx+40, 408);
 
-    sf::RectangleShape panelBg(sf::Vector2f(panelWidth, windowHeight));
-    panelBg.setPosition(boardPx, 0);
-    panelBg.setFillColor(panelColor);
     sf::Text movesTitle("Moves", font, 28);
     movesTitle.setFillColor(sf::Color::Black);
     movesTitle.setPosition(boardPx+20, 20);
@@ -96,23 +97,36 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-        }
-        window.clear(panelColor);
-
-        // Рисуем доску
-        for (int row = 0; row < boardSize; ++row) {
-            for (int col = 0; col < boardSize; ++col) {
-                sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
-                cell.setPosition(col*cellSize, row*cellSize);
-                if ((row+col)%2==0)
-                    cell.setFillColor(lightColor);
-                else
-                    cell.setFillColor(darkColor);
-                window.draw(cell);
+                
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    int mouseX = event.mouseButton.x;
+                    int mouseY = event.mouseButton.y;
+                    
+                    // Проверяем клик по кнопкам
+                    if (mouseX >= boardPx+20 && mouseX <= boardPx+panelWidth-20) {
+                        if (mouseY >= 300 && mouseY <= 340) {
+                            // TODO: Реализовать переворот доски
+                        }
+                        else if (mouseY >= 350 && mouseY <= 390) {
+                            // TODO: Реализовать сдачу
+                        }
+                        else if (mouseY >= 400 && mouseY <= 440) {
+                            // TODO: Реализовать предложение ничьей
+                        }
+                    }
+                }
             }
         }
+
+        window.clear(sf::Color(245, 241, 235));
+
+        // Рисуем доску и фигуры
+        renderer.drawBoard();
+        renderer.drawPieces(board);
+        
         // Рисуем панель
-        window.draw(panelBg);
+        renderer.drawPanel();
         window.draw(movesTitle);
         window.draw(flipBtn);
         window.draw(resignBtn);
