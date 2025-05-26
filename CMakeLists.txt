@@ -22,6 +22,7 @@ set(SOURCES
     Core/game.cpp
     Core/notation.cpp
     Core/renderer.cpp
+    Texture.cpp
 )
 
 # Заголовочные файлы

@@ -43,14 +43,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ALL_BUILD-Debug-5da2d290650dfdd7fa80.json",
+					"jsonFile" : "target-ALL_BUILD-Debug-80acc78b2fdb571ed9ab.json",
 					"name" : "ALL_BUILD",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "Chess::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Chess-Debug-b694c0e741a98d33c45c.json",
+					"jsonFile" : "target-Chess-Debug-bcf369c50321ae392d20.json",
 					"name" : "Chess",
 					"projectIndex" : 0
 				},
@@ -105,14 +105,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ALL_BUILD-Release-5da2d290650dfdd7fa80.json",
+					"jsonFile" : "target-ALL_BUILD-Release-80acc78b2fdb571ed9ab.json",
 					"name" : "ALL_BUILD",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "Chess::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Chess-Release-bedf557ad7ebf0a91f5d.json",
+					"jsonFile" : "target-Chess-Release-83381383dbdb7803ea4b.json",
 					"name" : "Chess",
 					"projectIndex" : 0
 				},
@@ -167,14 +167,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ALL_BUILD-MinSizeRel-5da2d290650dfdd7fa80.json",
+					"jsonFile" : "target-ALL_BUILD-MinSizeRel-80acc78b2fdb571ed9ab.json",
 					"name" : "ALL_BUILD",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "Chess::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Chess-MinSizeRel-50c26aa4b0b91788567c.json",
+					"jsonFile" : "target-Chess-MinSizeRel-eb0734c2bd2e20c4b219.json",
 					"name" : "Chess",
 					"projectIndex" : 0
 				},
@@ -229,14 +229,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-5da2d290650dfdd7fa80.json",
+					"jsonFile" : "target-ALL_BUILD-RelWithDebInfo-80acc78b2fdb571ed9ab.json",
 					"name" : "ALL_BUILD",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "Chess::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Chess-RelWithDebInfo-0e74961311dcef29258b.json",
+					"jsonFile" : "target-Chess-RelWithDebInfo-3a4e079dc96fc4c971a0.json",
 					"name" : "Chess",
 					"projectIndex" : 0
 				},

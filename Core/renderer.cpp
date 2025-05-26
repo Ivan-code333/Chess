@@ -1,7 +1,7 @@
 #include "renderer.h"
 #include <iostream>
 
-ChessRenderer::ChessRenderer(sf::RenderWindow& window, const std::string& spritesheetPath, const sf::Vector2i& pieceSize)
+ChessRenderer::ChessRenderer(sf::RenderWindow& window, const sf::Texture& spritesheet, const sf::Vector2i& pieceSize)
     : window(window)
     , cellSize(80)
     , boardPx(cellSize * 8)
@@ -10,17 +10,11 @@ ChessRenderer::ChessRenderer(sf::RenderWindow& window, const std::string& sprite
     , lightColor(240, 217, 181)
     , darkColor(181, 136, 99)
     , panelColor(245, 241, 235)
+    , spritesheetTexture(spritesheet)
 {
-    loadSpritesheet(spritesheetPath);
     pieceSprite.setTexture(spritesheetTexture);
     float scale = static_cast<float>(cellSize) / pieceSize.x;
     pieceSprite.setScale(sf::Vector2f(scale, scale));
-}
-
-void ChessRenderer::loadSpritesheet(const std::string& spritesheetPath) {
-    if (!spritesheetTexture.loadFromFile(spritesheetPath)) {
-        std::cerr << "Ошибка загрузки спрайтшита: " << spritesheetPath << std::endl;
-    }
 }
 
 sf::IntRect ChessRenderer::getPieceTextureRect(Color color, char symbol) const {

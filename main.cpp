@@ -6,6 +6,7 @@
 #include "Core/notation.h"
 #include "Core/renderer.h"
 #include "Font.h"
+#include "Texture.h"
 #include <SFML/Graphics.hpp>
 
 void printBoard(const Board& board) {
@@ -57,9 +58,12 @@ int main() {
     }
 
     // Создаем рендерер
-    // TODO: Замените "path/to/your/spritesheet.png" на актуальный путь к вашему файлу спрайтшита
-    // TODO: Замените sf::Vector2i(100, 100) на реальный размер одной фигуры на спрайтшите
-    ChessRenderer renderer(window, "C:/Chess/assets/pieces/Texture.png", sf::Vector2i(80, 80));
+    sf::Texture texture;
+    if (!texture.loadFromMemory(texture_data, texture_data_size)) {
+        std::cerr << "Ошибка загрузки текстуры из памяти!\n";
+        return -1;
+    }
+    ChessRenderer renderer(window, texture, sf::Vector2i(80, 80));
     
     // Создаем игру
     Game game;

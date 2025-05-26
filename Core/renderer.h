@@ -9,7 +9,7 @@
 
 class ChessRenderer {
 public:
-    ChessRenderer(sf::RenderWindow& window, const std::string& spritesheetPath, const sf::Vector2i& pieceSize);
+    ChessRenderer(sf::RenderWindow& window, const sf::Texture& spritesheet, const sf::Vector2i& pieceSize);
     
     void drawBoard();
     void drawPieces(const Board& board);
@@ -40,7 +40,6 @@ private:
     sf::Texture spritesheetTexture;
     sf::Sprite pieceSprite;
     
-    void loadSpritesheet(const std::string& spritesheetPath);
     sf::IntRect getPieceTextureRect(Color color, char symbol) const;
 };
 
