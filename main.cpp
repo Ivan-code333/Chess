@@ -64,7 +64,7 @@ int main() {
         return -1;
     }
     ChessRenderer renderer(window, texture, sf::Vector2i(80, 80));
-
+    
     Game game;
     game.reset();
     const Board& board = game.getBoard();
@@ -123,17 +123,78 @@ int main() {
     historyText.setFillColor(sf::Color::Black);
     historyText.setPosition(boardPx + 25, 65);
 
+    // Добавляем переменные для выбора фигуры
+    int selectedRow = -1;
+    int selectedCol = -1;
+    bool isPieceSelected = false;
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-
+                
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                int mouseX = event.mouseButton.x;
-                int mouseY = event.mouseButton.y;
-
+                    int mouseX = event.mouseButton.x;
+                    int mouseY = event.mouseButton.y;
+                    
                 if (!game.isGameOver()) {
+                    // Обработка клика по доске
+                    if (mouseX < boardPx) {
+                        int row, col;
+                        if (renderer.getSquareFromMouse(mouseX, mouseY, row, col)) {
+                            if (!isPieceSelected) {
+                                // Выбор фигуры
+                                auto piece = board.getPiece(row, col);
+                                if (piece && piece->getColor() == game.getCurrentTurn()) {
+                                    selectedRow = row;
+                                    selectedCol = col;
+                                    isPieceSelected = true;
+                                }
+                            } else {
+                                // Попытка сделать ход
+                                if (game.makeMove(selectedRow, selectedCol, row, col)) {
+                                    // Ход успешен
+                                    // Добавляем нотацию хода в историю
+                                    std::string moveNotation = 
+                                        std::string(1, 'a' + selectedCol) + 
+                                        std::to_string(8 - selectedRow) +
+                                        std::string(1, 'a' + col) + 
+                                        std::to_string(8 - row);
+                                    moveHistory.push_back(moveNotation);
+
+                                    // Проверяем состояние игры для предыдущего хода
+                                    Color previousTurn = (game.getCurrentTurn() == Color::White) ? Color::Black : Color::White;
+                                    if (MoveHandler::isKingInCheck(board, previousTurn)) {
+                                        if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                            moveHistory.push_back("Checkmate! " + 
+                                                std::string(previousTurn == Color::White ? "Black" : "White") + 
+                                                " wins.");
+                                            game.endGame();
+                                        } else {
+                                            moveHistory.push_back("Check!");
+                                        }
+                                    } else if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                                moveHistory.push_back("Stalemate! It's a draw.");
+                                                game.endGame();
+                                            }
+                                } else {
+                                    // Если ход невозможен, проверяем, не выбрана ли другая фигура
+                                    auto piece = board.getPiece(row, col);
+                                    if (piece && piece->getColor() == game.getCurrentTurn()) {
+                                        selectedRow = row;
+                                        selectedCol = col;
+                                    } else {
+                                        isPieceSelected = false;
+                                        selectedRow = -1;
+                                        selectedCol = -1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Обработка клика по полю ввода
                     if (mouseX >= boardPx + 20 && mouseX <= boardPx + panelWidth - 20 &&
                         mouseY >= 270 && mouseY <= 300) {
                         isInputActive = true;
@@ -165,8 +226,61 @@ int main() {
                         currentInput.erase(currentInput.getSize() - 1, 1);
                 } else if (event.text.unicode == '\r' || event.text.unicode == '\n') {
                     if (!currentInput.isEmpty()) {
-                        moveHistory.push_back(currentInput);
+                        try {
+                            std::string input = currentInput.toAnsiString();
+                            
+                            // Проверяем, не ожидается ли выбор фигуры для превращения пешки
+                            if (game.isWaitingForPromotion()) {
+                                if (input.length() == 1 && (input[0] == 'Q' || input[0] == 'R' || 
+                                    input[0] == 'B' || input[0] == 'N')) {
+                                    game.promotePawn(input[0]);
+                                    moveHistory.push_back("Pawn promoted to " + input);
+                                } else {
+                                    moveHistory.push_back("Invalid promotion piece! Choose Q, R, B, or N");
+                                }
+                                currentInput.clear();
+                                continue;
+                            }
+
+                            if (input.length() != 4) {
+                                moveHistory.push_back("Invalid move notation! Use format 'e2e4'");
+                                currentInput.clear();
+                                continue;
+                            }
+
+                            ParsedMove move = Notation::parseMoveNotation(game, input);
+                            if (move.valid) {
+                                if (game.makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol)) {
+                                    moveHistory.push_back(currentInput);
+
+                                    // Проверяем состояние игры для предыдущего хода
+                                    Color previousTurn = (game.getCurrentTurn() == Color::White) ? Color::Black : Color::White;
+                                    if (MoveHandler::isKingInCheck(board, previousTurn)) {
+                                        if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                            moveHistory.push_back("Checkmate! " + 
+                                                std::string(previousTurn == Color::White ? "Black" : "White") + 
+                                                " wins.");
+                                            game.endGame();
+                                        } else {
+                                            moveHistory.push_back("Check!");
+                                        }
+                                    } else if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                                moveHistory.push_back("Stalemate! It's a draw.");
+                                                game.endGame();
+                                            }
+                                } else {
+                                    moveHistory.push_back("Invalid move!");
+                                }
+                            } else {
+                                moveHistory.push_back("Invalid move notation!");
+                            }
+                        } catch (const std::exception& e) {
+                            moveHistory.push_back("Error: Invalid input format");
+                        }
                         currentInput.clear();
+                        isPieceSelected = false;
+                        selectedRow = -1;
+                        selectedCol = -1;
                     }
                 } else if (event.text.unicode < 128 && currentInput.getSize() < MAX_INPUT_LENGTH) {
                     char ch = static_cast<char>(event.text.unicode);
@@ -211,6 +325,15 @@ int main() {
         window.clear(sf::Color(245, 241, 235));
 
         renderer.drawBoard();
+        
+        // Подсветка выбранной фигуры
+        if (isPieceSelected) {
+            sf::RectangleShape highlight(sf::Vector2f(cellSize, cellSize));
+            highlight.setPosition(sf::Vector2f(selectedCol * cellSize, selectedRow * cellSize));
+            highlight.setFillColor(sf::Color(255, 255, 0, 100));
+            window.draw(highlight);
+        }
+        
         renderer.drawPieces(board);
         renderer.drawPanel();
 
