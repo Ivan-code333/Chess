@@ -46,8 +46,9 @@ int main() {
     const int boardSize = 8;
     const int boardPx = cellSize * boardSize;
     const int panelWidth = 320;
-    const int windowWidth = boardPx + panelWidth;
-    const int windowHeight = boardPx;
+    const int coordSize = 30; // Размер области для координат
+    const int windowWidth = boardPx + panelWidth + coordSize; // Добавляем место для вертикальных координат
+    const int windowHeight = boardPx + coordSize; // Добавляем место для горизонтальных координат
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setFramerateLimit(60);
@@ -70,12 +71,11 @@ int main() {
     const Board& board = game.getBoard();
 
     std::vector<sf::String> moveHistory;
-    sf::String currentInput;
     bool isInputActive = false;
     const int MAX_INPUT_LENGTH = 4;
 
-    sf::RectangleShape historyBox(sf::Vector2f(panelWidth - 40, 200));
-    historyBox.setPosition(boardPx + 20, 60);
+    sf::RectangleShape historyBox(sf::Vector2f(panelWidth - 40, 400));
+    historyBox.setPosition(boardPx + coordSize + 20, 60); // Сдвигаем с учетом координат
     historyBox.setFillColor(sf::Color(240, 240, 240));
     historyBox.setOutlineColor(sf::Color(200, 200, 200));
     historyBox.setOutlineThickness(2);
@@ -95,33 +95,93 @@ int main() {
     inputHint.setPosition(boardPx + 25, 275);
 
     sf::RectangleShape flipBtn(sf::Vector2f(panelWidth - 40, 40));
-    flipBtn.setPosition(boardPx + 20, 310);
+    flipBtn.setPosition(boardPx + coordSize + 20, 470); // Сдвигаем с учетом координат
     flipBtn.setFillColor(sf::Color(245, 241, 235));
     flipBtn.setOutlineColor(sf::Color(220, 210, 200));
     flipBtn.setOutlineThickness(2);
 
     sf::RectangleShape resignBtn = flipBtn;
-    resignBtn.setPosition(boardPx + 20, 360);
+    resignBtn.setPosition(boardPx + coordSize + 20, 520); // Сдвигаем с учетом координат
     sf::RectangleShape drawBtn = flipBtn;
-    drawBtn.setPosition(boardPx + 20, 410);
+    drawBtn.setPosition(boardPx + coordSize + 20, 570); // Сдвигаем с учетом координат
 
     sf::Text flipText("Flip board", font, 22);
     flipText.setFillColor(sf::Color(80, 80, 80));
-    flipText.setPosition(boardPx + 40, 318);
+    flipText.setPosition(boardPx + coordSize + 40, 478); // Сдвигаем с учетом координат
     sf::Text resignText("Resign", font, 22);
     resignText.setFillColor(sf::Color(80, 80, 80));
-    resignText.setPosition(boardPx + 40, 368);
+    resignText.setPosition(boardPx + coordSize + 40, 528); // Сдвигаем с учетом координат
     sf::Text drawText("Draw", font, 22);
     drawText.setFillColor(sf::Color(80, 80, 80));
-    drawText.setPosition(boardPx + 40, 418);
+    drawText.setPosition(boardPx + coordSize + 40, 578); // Сдвигаем с учетом координат
 
     sf::Text movesTitle("Moves", font, 28);
     movesTitle.setFillColor(sf::Color::Black);
-    movesTitle.setPosition(boardPx + 20, 20);
+    movesTitle.setPosition(boardPx + coordSize + 20, 20);
+
+    // Добавляем статические координаты
+    sf::Text coord1("1", font, 28);
+    sf::Text coord2("2", font, 28);
+    sf::Text coord3("3", font, 28);
+    sf::Text coord4("4", font, 28);
+    sf::Text coord5("5", font, 28);
+    sf::Text coord6("6", font, 28);
+    sf::Text coord7("7", font, 28);
+    sf::Text coord8("8", font, 28);
+
+    sf::Text coordA("a", font, 28);
+    sf::Text coordB("b", font, 28);
+    sf::Text coordC("c", font, 28);
+    sf::Text coordD("d", font, 28);
+    sf::Text coordE("e", font, 28);
+    sf::Text coordF("f", font, 28);
+    sf::Text coordG("g", font, 28);
+    sf::Text coordH("h", font, 28);
+
+    // Устанавливаем позиции для горизонтальных координат
+    coord8.setPosition(boardPx+5, cellSize/2 - 15);
+    coord7.setPosition(boardPx+5, cellSize*1.5 - 15);
+    coord6.setPosition(boardPx+5, cellSize*2.5 - 15);
+    coord5.setPosition(boardPx+5, cellSize*3.5 - 15);
+    coord4.setPosition(boardPx+5, cellSize*4.5 - 15);
+    coord3.setPosition(boardPx+5, cellSize*5.5 - 15);
+    coord2.setPosition(boardPx+5, cellSize*6.5 - 15);
+    coord1.setPosition(boardPx+5, cellSize*7.5 - 15);
+
+    // Устанавливаем позиции для вертикальных координат
+    coordA.setPosition(cellSize/2 - 10, boardPx + coordSize/2 - 20); // Промежуточное положение
+    coordB.setPosition(cellSize*1.5 - 10, boardPx + coordSize/2 - 20);
+    coordC.setPosition(cellSize*2.5 - 10, boardPx + coordSize/2 - 20);
+    coordD.setPosition(cellSize*3.5 - 10, boardPx + coordSize/2 - 20);
+    coordE.setPosition(cellSize*4.5 - 10, boardPx + coordSize/2 - 20);
+    coordF.setPosition(cellSize*5.5 - 10, boardPx + coordSize/2 - 20);
+    coordG.setPosition(cellSize*6.5 - 10, boardPx + coordSize/2 - 20);
+    coordH.setPosition(cellSize*7.5 - 10, boardPx + coordSize/2 - 20);
+
+    // Устанавливаем цвет для всех координат
+    coord1.setFillColor(sf::Color(0, 0, 0));
+    coord2.setFillColor(sf::Color(0, 0, 0));
+    coord3.setFillColor(sf::Color(0, 0, 0));
+    coord4.setFillColor(sf::Color(0, 0, 0));
+    coord5.setFillColor(sf::Color(0, 0, 0));
+    coord6.setFillColor(sf::Color(0, 0, 0));
+    coord7.setFillColor(sf::Color(0, 0, 0));
+    coord8.setFillColor(sf::Color(0, 0, 0));
+    coordA.setFillColor(sf::Color(0, 0, 0));
+    coordB.setFillColor(sf::Color(0, 0, 0));
+    coordC.setFillColor(sf::Color(0, 0, 0));
+    coordD.setFillColor(sf::Color(0, 0, 0));
+    coordE.setFillColor(sf::Color(0, 0, 0));
+    coordF.setFillColor(sf::Color(0, 0, 0));
+    coordG.setFillColor(sf::Color(0, 0, 0));
+    coordH.setFillColor(sf::Color(0, 0, 0));
+
+    
 
     sf::Text historyText("", font, 18);
     historyText.setFillColor(sf::Color::Black);
-    historyText.setPosition(boardPx + 25, 65);
+    historyText.setPosition(boardPx + coordSize + 25, 65);
+    historyText.setLineSpacing(1.5f); // Увеличиваем межстрочный интервал
 
     // Добавляем переменные для выбора фигуры
     int selectedRow = -1;
@@ -205,15 +265,15 @@ int main() {
                     }
 
                     // Проверка нажатия кнопки Resign
-                    if (mouseX >= boardPx + 20 && mouseX <= boardPx + panelWidth - 20 &&
-                        mouseY >= 360 && mouseY <= 400) {
+                    if (mouseX >= boardPx + coordSize + 20 && mouseX <= boardPx + coordSize + panelWidth - 20 &&
+                        mouseY >= 520 && mouseY <= 570) {
                         game.endGame();
                         moveHistory.push_back(game.getCurrentTurn() == Color::White ? "Black wins by resignation" : "White wins by resignation");
                     }
 
                     // Проверка нажатия кнопки Draw
-                    if (mouseX >= boardPx + 20 && mouseX <= boardPx + panelWidth - 20 &&
-                        mouseY >= 410 && mouseY <= 450) {
+                    if (mouseX >= boardPx + coordSize + 20 && mouseX <= boardPx + coordSize + panelWidth - 20 &&
+                        mouseY >= 570 && mouseY <= 610) {
                         game.endGame();
                         moveHistory.push_back("Game drawn by agreement");
                     }
@@ -221,86 +281,20 @@ int main() {
             }
 
             if (event.type == sf::Event::TextEntered && isInputActive && !game.isGameOver()) {
-                if (event.text.unicode == 8) { // backspace
-                    if (!currentInput.isEmpty())
-                        currentInput.erase(currentInput.getSize() - 1, 1);
-                } else if (event.text.unicode == '\r' || event.text.unicode == '\n') {
-                    if (!currentInput.isEmpty()) {
-                        try {
-                            std::string input = currentInput.toAnsiString();
-                            
-                            // Проверяем, не ожидается ли выбор фигуры для превращения пешки
-                            if (game.isWaitingForPromotion()) {
-                                if (input.length() == 1 && (input[0] == 'Q' || input[0] == 'R' || 
-                                    input[0] == 'B' || input[0] == 'N')) {
-                                    game.promotePawn(input[0]);
-                                    moveHistory.push_back("Pawn promoted to " + input);
-                                } else {
-                                    moveHistory.push_back("Invalid promotion piece! Choose Q, R, B, or N");
-                                }
-                                currentInput.clear();
-                                continue;
-                            }
-
-                            if (input.length() != 4) {
-                                moveHistory.push_back("Invalid move notation! Use format 'e2e4'");
-                                currentInput.clear();
-                                continue;
-                            }
-
-                            ParsedMove move = Notation::parseMoveNotation(game, input);
-                            if (move.valid) {
-                                if (game.makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol)) {
-                                    moveHistory.push_back(currentInput);
-
-                                    // Проверяем состояние игры для предыдущего хода
-                                    Color previousTurn = (game.getCurrentTurn() == Color::White) ? Color::Black : Color::White;
-                                    if (MoveHandler::isKingInCheck(board, previousTurn)) {
-                                        if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
-                                            moveHistory.push_back("Checkmate! " + 
-                                                std::string(previousTurn == Color::White ? "Black" : "White") + 
-                                                " wins.");
-                                            game.endGame();
-                                        } else {
-                                            moveHistory.push_back("Check!");
-                                        }
-                                    } else if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
-                                                moveHistory.push_back("Stalemate! It's a draw.");
-                                                game.endGame();
-                                            }
-                                } else {
-                                    moveHistory.push_back("Invalid move!");
-                                }
-                            } else {
-                                moveHistory.push_back("Invalid move notation!");
-                            }
-                        } catch (const std::exception& e) {
-                            moveHistory.push_back("Error: Invalid input format");
-                        }
-                        currentInput.clear();
-                        isPieceSelected = false;
-                        selectedRow = -1;
-                        selectedCol = -1;
-                    }
-                } else if (event.text.unicode < 128 && currentInput.getSize() < MAX_INPUT_LENGTH) {
-                    char ch = static_cast<char>(event.text.unicode);
-                    if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9'))
-                        currentInput += ch;
-                }
-                inputText.setString(currentInput);
+                // Удаляем весь блок обработки текстового ввода
             }
         }
 
         // Обновление цвета кнопок при наведении
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         if (!game.isGameOver()) {
-            if (mousePos.x >= boardPx + 20 && mousePos.x <= boardPx + panelWidth - 20) {
-                if (mousePos.y >= 360 && mousePos.y <= 400) {
+            if (mousePos.x >= boardPx + coordSize + 20 && mousePos.x <= boardPx + coordSize + panelWidth - 20) {
+                if (mousePos.y >= 520 && mousePos.y <= 570) {
                     resignBtn.setFillColor(sf::Color(235, 231, 225));
                 } else {
                     resignBtn.setFillColor(sf::Color(245, 241, 235));
                 }
-                if (mousePos.y >= 410 && mousePos.y <= 450) {
+                if (mousePos.y >= 570 && mousePos.y <= 610) {
                     drawBtn.setFillColor(sf::Color(235, 231, 225));
                 } else {
                     drawBtn.setFillColor(sf::Color(245, 241, 235));
@@ -324,12 +318,15 @@ int main() {
 
         window.clear(sf::Color(245, 241, 235));
 
+        // Отрисовка координат (сначала цифры, потом буквы)
+        
+
         renderer.drawBoard();
         
         // Подсветка выбранной фигуры
         if (isPieceSelected) {
             sf::RectangleShape highlight(sf::Vector2f(cellSize, cellSize));
-            highlight.setPosition(sf::Vector2f(selectedCol * cellSize, selectedRow * cellSize));
+            highlight.setPosition(sf::Vector2f(selectedCol * cellSize, selectedRow * cellSize)); // Сдвигаем с учетом координат
             highlight.setFillColor(sf::Color(255, 255, 0, 100));
             window.draw(highlight);
         }
@@ -341,11 +338,6 @@ int main() {
         window.draw(historyBox);
         window.draw(historyText);
 
-        window.draw(inputBox);
-        if (currentInput.isEmpty() && !isInputActive && !game.isGameOver())
-            window.draw(inputHint);
-        else
-            window.draw(inputText);
 
         window.draw(flipBtn);
         window.draw(resignBtn);
@@ -354,7 +346,27 @@ int main() {
         window.draw(resignText);
         window.draw(drawText);
 
+        window.draw(coord1);
+        window.draw(coord2);
+        window.draw(coord3);
+        window.draw(coord4);
+        window.draw(coord5);
+        window.draw(coord6);
+        window.draw(coord7);
+        window.draw(coord8);
+        window.draw(coordA);
+        window.draw(coordB);
+        window.draw(coordC);
+        window.draw(coordD);
+        window.draw(coordE);
+        window.draw(coordF);
+        window.draw(coordG);
+        window.draw(coordH);
+
         window.display();
     }
     return 0;
 }
+
+
+
