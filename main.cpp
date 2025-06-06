@@ -190,6 +190,22 @@ int main() {
     int selectedCol = -1;
     bool isPieceSelected = false;
 
+    // Добавляем переменные для прокрутки
+    float scrollOffset = 0;
+    const float SCROLL_SPEED = 20.0f;
+    const float MAX_SCROLL = 0; // Максимальное смещение вверх
+    float minScroll = 0; // Минимальное смещение вниз будет рассчитано позже
+
+    // Создаем view для области истории
+    sf::View historyView(sf::FloatRect(
+        boardPx + coordSize + 20, 60,  // Позиция
+        panelWidth - 40, 400           // Размер (такой же как у historyBox)
+    ));
+    historyView.setViewport(sf::FloatRect(
+        (boardPx + coordSize + 20.0f) / windowWidth, 60.0f / windowHeight,
+        (panelWidth - 40.0f) / windowWidth, 400.0f / windowHeight
+    ));
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -286,6 +302,16 @@ int main() {
             if (event.type == sf::Event::TextEntered && isInputActive && !game.isGameOver()) {
                 // Удаляем весь блок обработки текстового ввода
             }
+
+            if (event.type == sf::Event::MouseWheelScrolled) {
+                if (event.mouseWheelScroll.delta > 0) {
+                    // Прокрутка вверх
+                    scrollOffset = std::min(MAX_SCROLL, scrollOffset + SCROLL_SPEED);
+                } else {
+                    // Прокрутка вниз
+                    scrollOffset = std::max(minScroll, scrollOffset - SCROLL_SPEED);
+                }
+            }
         }
 
         // Обновление цвета кнопок при наведении
@@ -336,6 +362,12 @@ int main() {
         window.draw(movesTitle);
         window.draw(historyBox);
 
+        // Сохраняем текущий view
+        sf::View defaultView = window.getView();
+        
+        // Устанавливаем view для истории
+        window.setView(historyView);
+
         // Формируем текст истории
         sf::String historyString;
         for (const auto& move : moveHistory) {
@@ -344,7 +376,19 @@ int main() {
             }
         }
         historyText.setString(historyString);
+
+        // Рассчитываем минимальное смещение для прокрутки
+        sf::FloatRect textBounds = historyText.getGlobalBounds();
+        float textHeight = textBounds.height;
+        float boxHeight = historyBox.getSize().y - 10; // Оставляем небольшой отступ
+        minScroll = std::min(0.0f, boxHeight - textHeight);
+
+        // Применяем смещение
+        historyText.setPosition(boardPx + coordSize + 25, 65 + scrollOffset);
         window.draw(historyText);
+
+        // Возвращаем стандартный view
+        window.setView(defaultView);
 
         window.draw(flipBtn);
         window.draw(resignBtn);
