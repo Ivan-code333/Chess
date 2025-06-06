@@ -23,6 +23,7 @@ set(SOURCES
     Core/notation.cpp
     Core/renderer.cpp
     Texture.cpp
+    Favicon.cpp
 )
 
 # Заголовочные файлы
@@ -34,6 +35,7 @@ set(HEADERS
     Core/notation.h
     Core/renderer.h
     Font.h
+    
 )
 
 # Создаем исполняемый файл

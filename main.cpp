@@ -8,6 +8,7 @@
 #include "Core/renderer.h"
 #include "Font.h"
 #include "Texture.h"
+#include "Favicon.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -53,6 +54,14 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Chess");
     window.setFramerateLimit(60);
 
+    // Загружаем фавикон
+    sf::Image icon;
+    if (!icon.loadFromMemory(favicon_data, favicon_data_size)) {
+        std::cerr << "Ошибка загрузки фавикона!\n";
+    } else {
+        window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    }
+
     sf::Font font;
     if (!font.loadFromMemory(font_data, font_data_size)) {
         std::cerr << "Ошибка загрузки шрифта из памяти!\n";
@@ -64,6 +73,7 @@ int main() {
         std::cerr << "Ошибка загрузки текстуры из памяти!\n";
         return -1;
     }
+
     ChessRenderer renderer(window, texture, sf::Vector2i(80, 80));
     
     Game game;
