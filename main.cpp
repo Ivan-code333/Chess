@@ -207,6 +207,36 @@ int main() {
         (panelWidth - 40.0f) / windowWidth, 400.0f / windowHeight
     ));
 
+    // Добавляем переменные для окна выбора фигуры
+    bool isPromotionWindowOpen = false;
+    int promotionRow = -1;
+    int promotionCol = -1;
+    sf::RectangleShape promotionWindow(sf::Vector2f(200, 100));
+    promotionWindow.setFillColor(sf::Color(245, 241, 235));
+    promotionWindow.setOutlineColor(sf::Color(200, 200, 200));
+    promotionWindow.setOutlineThickness(2);
+
+    // Создаем кнопки для выбора фигуры
+    const int PROMOTION_BUTTON_SIZE = 40;
+    std::vector<sf::RectangleShape> promotionButtons;
+    std::vector<sf::Text> promotionTexts;
+    std::vector<char> promotionPieces = {'Q', 'R', 'N', 'B'}; // Ферзь, Ладья, Конь, Слон
+
+    for (int i = 0; i < 4; ++i) {
+        sf::RectangleShape button(sf::Vector2f(PROMOTION_BUTTON_SIZE, PROMOTION_BUTTON_SIZE));
+        button.setFillColor(sf::Color(255, 255, 255));
+        button.setOutlineColor(sf::Color(200, 200, 200));
+        button.setOutlineThickness(1);
+        promotionButtons.push_back(button);
+
+        sf::Text text;
+        text.setFont(font);
+        text.setString(sf::String(promotionPieces[i]));
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::Black);
+        promotionTexts.push_back(text);
+    }
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -217,7 +247,47 @@ int main() {
                     int mouseX = event.mouseButton.x;
                     int mouseY = event.mouseButton.y;
                     
-                if (!game.isGameOver()) {
+                if (isPromotionWindowOpen) {
+                    // Проверяем клик по кнопкам выбора фигуры
+                    for (int i = 0; i < 4; ++i) {
+                        if (promotionButtons[i].getGlobalBounds().contains(mouseX, mouseY)) {
+                            // Превращаем пешку в выбранную фигуру
+                            game.promotePawn(promotionPieces[i]);
+                            isPromotionWindowOpen = false;
+                            
+                            // Добавляем нотацию хода в историю
+                            sf::String moveNotation;
+                            moveNotation += sf::String(static_cast<char>('a' + selectedCol));
+                            moveNotation += sf::String(static_cast<char>('8' - selectedRow));
+                            moveNotation += sf::String(static_cast<char>('a' + promotionCol));
+                            moveNotation += sf::String(static_cast<char>('8' - promotionRow));
+                            moveNotation += sf::String(promotionPieces[i]);
+                            moveHistory.push_back(moveNotation);
+
+                            // Проверяем состояние игры
+                            Color currentTurn = game.getCurrentTurn();
+                            if (MoveHandler::isKingInCheck(board, currentTurn)) {
+                                if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+                                    sf::String checkmateMsg = sf::String("Checkmate! ");
+                                    checkmateMsg += sf::String(currentTurn == Color::White ? "Black" : "White");
+                                    checkmateMsg += sf::String(" wins.");
+                                    moveHistory.push_back(checkmateMsg);
+                                    game.endGame();
+                                } else {
+                                    moveHistory.push_back(sf::String("Check!"));
+                                }
+                            } else if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+                                moveHistory.push_back(sf::String("Stalemate! It's a draw."));
+                                game.endGame();
+                            }
+
+                            isPieceSelected = false;
+                            selectedRow = -1;
+                            selectedCol = -1;
+                            break;
+                        }
+                    }
+                } else if (!game.isGameOver()) {
                     // Обработка клика по доске
                     if (mouseX < boardPx) {
                         int row, col;
@@ -233,36 +303,64 @@ int main() {
                             } else {
                                 // Попытка сделать ход
                                 if (game.makeMove(selectedRow, selectedCol, row, col)) {
-                                    // Ход успешен
-                                    // Добавляем нотацию хода в историю
-                                    sf::String moveNotation;
-                                    moveNotation += sf::String(static_cast<char>('a' + selectedCol));
-                                    moveNotation += sf::String(static_cast<char>('8' - selectedRow));
-                                    moveNotation += sf::String(static_cast<char>('a' + col));
-                                    moveNotation += sf::String(static_cast<char>('8' - row));
-                                    moveHistory.push_back(moveNotation);
+                                    // Проверяем, нужно ли превращение пешки
+                                    auto piece = board.getPiece(row, col);
+                                    if (piece && (piece->getSymbol() == 'P' || piece->getSymbol() == 'p') && 
+                                        ((piece->getColor() == Color::White && row == 0) || 
+                                         (piece->getColor() == Color::Black && row == 7))) {
+                                        // Открываем окно выбора фигуры
+                                        isPromotionWindowOpen = true;
+                                        promotionRow = row;
+                                        promotionCol = col;
+                                        
+                                        // Позиционируем окно выбора
+                                        float windowX = col * cellSize + (cellSize - 200) / 2;
+                                        float windowY = row * cellSize + (cellSize - 100) / 2;
+                                        promotionWindow.setPosition(windowX, windowY);
+                                        
+                                        // Позиционируем кнопки
+                                        for (int i = 0; i < 4; ++i) {
+                                            promotionButtons[i].setPosition(
+                                                windowX + 10 + i * (PROMOTION_BUTTON_SIZE + 10),
+                                                windowY + 30
+                                            );
+                                            promotionTexts[i].setPosition(
+                                                windowX + 20 + i * (PROMOTION_BUTTON_SIZE + 10),
+                                                windowY + 35
+                                            );
+                                        }
+                                    } else {
+                                        // Ход успешен
+                                        // Добавляем нотацию хода в историю
+                                        sf::String moveNotation;
+                                        moveNotation += sf::String(static_cast<char>('a' + selectedCol));
+                                        moveNotation += sf::String(static_cast<char>('8' - selectedRow));
+                                        moveNotation += sf::String(static_cast<char>('a' + col));
+                                        moveNotation += sf::String(static_cast<char>('8' - row));
+                                        moveHistory.push_back(moveNotation);
 
-                                    // Проверяем состояние игры для текущего хода
-                                    Color currentTurn = game.getCurrentTurn();
-                                    if (MoveHandler::isKingInCheck(board, currentTurn)) {
-                                        if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
-                                            sf::String checkmateMsg = sf::String("Checkmate! ");
-                                            checkmateMsg += sf::String(currentTurn == Color::White ? "Black" : "White");
-                                            checkmateMsg += sf::String(" wins.");
-                                            moveHistory.push_back(checkmateMsg);
+                                        // Проверяем состояние игры для текущего хода
+                                        Color currentTurn = game.getCurrentTurn();
+                                        if (MoveHandler::isKingInCheck(board, currentTurn)) {
+                                            if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+                                                sf::String checkmateMsg = sf::String("Checkmate! ");
+                                                checkmateMsg += sf::String(currentTurn == Color::White ? "Black" : "White");
+                                                checkmateMsg += sf::String(" wins.");
+                                                moveHistory.push_back(checkmateMsg);
+                                                game.endGame();
+                                                isPieceSelected = false;
+                                                selectedRow = -1;
+                                                selectedCol = -1;
+                                            } else {
+                                                moveHistory.push_back(sf::String("Check!"));
+                                            }
+                                        } else if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+                                            moveHistory.push_back(sf::String("Stalemate! It's a draw."));
                                             game.endGame();
                                             isPieceSelected = false;
                                             selectedRow = -1;
                                             selectedCol = -1;
-                                        } else {
-                                            moveHistory.push_back(sf::String("Check!"));
                                         }
-                                    } else if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
-                                        moveHistory.push_back(sf::String("Stalemate! It's a draw."));
-                                        game.endGame();
-                                        isPieceSelected = false;
-                                        selectedRow = -1;
-                                        selectedCol = -1;
                                     }
                                 } else {
                                     // Если ход невозможен, проверяем, не выбрана ли другая фигура
@@ -421,6 +519,15 @@ int main() {
         window.draw(coordF);
         window.draw(coordG);
         window.draw(coordH);
+
+        // Отрисовка окна выбора фигуры
+        if (isPromotionWindowOpen) {
+            window.draw(promotionWindow);
+            for (int i = 0; i < 4; ++i) {
+                window.draw(promotionButtons[i]);
+                window.draw(promotionTexts[i]);
+            }
+        }
 
         window.display();
     }
