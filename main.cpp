@@ -198,7 +198,8 @@ int main() {
 
     // Создаем view для области истории
     sf::View historyView(sf::FloatRect(
-        boardPx + coordSize + 20, 60,  // Позиция
+        //boardPx + coordSize + 20, 60,
+        0, 0,   // Позиция
         panelWidth - 40, 400           // Размер (такой же как у historyBox)
     ));
     historyView.setViewport(sf::FloatRect(
@@ -241,21 +242,27 @@ int main() {
                                     moveNotation += sf::String(static_cast<char>('8' - row));
                                     moveHistory.push_back(moveNotation);
 
-                                    // Проверяем состояние игры для предыдущего хода
-                                    Color previousTurn = (game.getCurrentTurn() == Color::White) ? Color::Black : Color::White;
-                                    if (MoveHandler::isKingInCheck(board, previousTurn)) {
-                                        if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                    // Проверяем состояние игры для текущего хода
+                                    Color currentTurn = game.getCurrentTurn();
+                                    if (MoveHandler::isKingInCheck(board, currentTurn)) {
+                                        if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
                                             sf::String checkmateMsg = sf::String("Checkmate! ");
-                                            checkmateMsg += sf::String(previousTurn == Color::White ? "Black" : "White");
+                                            checkmateMsg += sf::String(currentTurn == Color::White ? "Black" : "White");
                                             checkmateMsg += sf::String(" wins.");
                                             moveHistory.push_back(checkmateMsg);
                                             game.endGame();
+                                            isPieceSelected = false;
+                                            selectedRow = -1;
+                                            selectedCol = -1;
                                         } else {
                                             moveHistory.push_back(sf::String("Check!"));
                                         }
-                                    } else if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
+                                    } else if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
                                         moveHistory.push_back(sf::String("Stalemate! It's a draw."));
                                         game.endGame();
+                                        isPieceSelected = false;
+                                        selectedRow = -1;
+                                        selectedCol = -1;
                                     }
                                 } else {
                                     // Если ход невозможен, проверяем, не выбрана ли другая фигура
@@ -384,7 +391,8 @@ int main() {
         minScroll = std::min(0.0f, boxHeight - textHeight);
 
         // Применяем смещение
-        historyText.setPosition(boardPx + coordSize + 25, 65 + scrollOffset);
+        //historyText.setPosition(boardPx + coordSize + 25, 65 + scrollOffset);
+        historyText.setPosition(5, scrollOffset);
         window.draw(historyText);
 
         // Возвращаем стандартный view
