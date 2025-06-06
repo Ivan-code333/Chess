@@ -185,6 +185,7 @@ bool MoveHandler::isKingInCheck(const Board& board, Color kingColor) {
                 }
             }
         }
+        if (kingRow != -1) break;
     }
 
     if (kingRow == -1 || kingCol == -1)
@@ -195,9 +196,24 @@ bool MoveHandler::isKingInCheck(const Board& board, Color kingColor) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
             auto piece = board.getPiece(row, col);
             if (piece && piece->getColor() != kingColor) {
-                if (piece->isMoveLegal(row, col, kingRow, kingCol) &&
-                    isPathClear(board, row, col, kingRow, kingCol)) {
-                    return true;
+                // Специальная проверка для пешек
+                if (piece->getSymbol() == 'P' || piece->getSymbol() == 'p') {
+                    // Пешки атакуют по диагонали
+                    int direction = (piece->getColor() == Color::White) ? -1 : 1;
+                    if (row + direction == kingRow && 
+                        (col + 1 == kingCol || col - 1 == kingCol)) {
+                        return true;
+                    }
+                    continue; // Пропускаем обычную проверку для пешек
+                }
+                
+                // Для остальных фигур
+                if (piece->isMoveLegal(row, col, kingRow, kingCol)) {
+                    // Проверяем, что путь до короля свободен
+                    if (piece->getSymbol() == 'N' || piece->getSymbol() == 'n' ||
+                        isPathClear(board, row, col, kingRow, kingCol)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -218,13 +234,13 @@ bool MoveHandler::hasLegalMoves(const Board& board, Color turn) {
                     if (fromRow == toRow && fromCol == toCol)
                         continue;
 
-                    if (!MoveHandler::isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn))
-                        continue;
-
-                    auto tempBoard = board;
-                    tempBoard.movePiece(fromRow, fromCol, toRow, toCol);
-                    if (!isKingInCheck(tempBoard, turn)) {
-                        return true;
+                    if (isMoveLegal(board, fromRow, fromCol, toRow, toCol, turn)) {
+                        // Проверяем, не оставляет ли этот ход короля под шахом
+                        Board tempBoard = board;
+                        tempBoard.movePiece(fromRow, fromCol, toRow, toCol);
+                        if (!isKingInCheck(tempBoard, turn)) {
+                            return true;
+                        }
                     }
                 }
             }

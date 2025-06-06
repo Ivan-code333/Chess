@@ -24,12 +24,19 @@ public:
     // Получить размер доски в пикселях
     int getBoardSize() const { return boardPx; }
 
+    // Перевернуть доску
+    void flipBoard() { isBoardFlipped = !isBoardFlipped; }
+    
+    // Проверить, перевернута ли доска
+    bool isFlipped() const { return isBoardFlipped; }
+
 private:
     sf::RenderWindow& window;
     int cellSize;
     int boardPx;
     int panelWidth;
     sf::Vector2i pieceSize;
+    bool isBoardFlipped = false;
     
     // Цвета
     sf::Color lightColor;

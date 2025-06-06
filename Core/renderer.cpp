@@ -51,13 +51,16 @@ void ChessRenderer::drawBoard() {
 void ChessRenderer::drawPieces(const Board& board) {
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
+            int displayRow = isBoardFlipped ? 7 - row : row;
+            int displayCol = isBoardFlipped ? 7 - col : col;
+            
             auto piece = board.getPiece(row, col);
             if (piece) {
                 sf::IntRect textureRect = getPieceTextureRect(piece->getColor(), piece->getSymbol());
                 
                 if (textureRect != sf::IntRect()) {
                     pieceSprite.setTextureRect(textureRect);
-                    pieceSprite.setPosition(sf::Vector2f(col * cellSize, row * cellSize));
+                    pieceSprite.setPosition(sf::Vector2f(displayCol * cellSize, displayRow * cellSize));
                     window.draw(pieceSprite);
                 }
             }
@@ -79,5 +82,11 @@ bool ChessRenderer::getSquareFromMouse(int mouseX, int mouseY, int& row, int& co
     
     col = mouseX / cellSize;
     row = mouseY / cellSize;
+    
+    if (isBoardFlipped) {
+        row = 7 - row;
+        col = 7 - col;
+    }
+    
     return true;
 } 
