@@ -178,10 +178,12 @@ int main() {
 
     
 
-    sf::Text historyText("", font, 18);
+    sf::Text historyText;
+    historyText.setFont(font);
+    historyText.setCharacterSize(18);
     historyText.setFillColor(sf::Color::Black);
     historyText.setPosition(boardPx + coordSize + 25, 65);
-    historyText.setLineSpacing(1.5f); // Увеличиваем межстрочный интервал
+    historyText.setLineSpacing(1.5f);
 
     // Добавляем переменные для выбора фигуры
     int selectedRow = -1;
@@ -216,28 +218,29 @@ int main() {
                                 if (game.makeMove(selectedRow, selectedCol, row, col)) {
                                     // Ход успешен
                                     // Добавляем нотацию хода в историю
-                                    std::string moveNotation = 
-                                        std::string(1, 'a' + selectedCol) + 
-                                        std::to_string(8 - selectedRow) +
-                                        std::string(1, 'a' + col) + 
-                                        std::to_string(8 - row);
+                                    sf::String moveNotation;
+                                    moveNotation += sf::String(static_cast<char>('a' + selectedCol));
+                                    moveNotation += sf::String(static_cast<char>('8' - selectedRow));
+                                    moveNotation += sf::String(static_cast<char>('a' + col));
+                                    moveNotation += sf::String(static_cast<char>('8' - row));
                                     moveHistory.push_back(moveNotation);
 
                                     // Проверяем состояние игры для предыдущего хода
                                     Color previousTurn = (game.getCurrentTurn() == Color::White) ? Color::Black : Color::White;
                                     if (MoveHandler::isKingInCheck(board, previousTurn)) {
                                         if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
-                                            moveHistory.push_back("Checkmate! " + 
-                                                std::string(previousTurn == Color::White ? "Black" : "White") + 
-                                                " wins.");
+                                            sf::String checkmateMsg = sf::String("Checkmate! ");
+                                            checkmateMsg += sf::String(previousTurn == Color::White ? "Black" : "White");
+                                            checkmateMsg += sf::String(" wins.");
+                                            moveHistory.push_back(checkmateMsg);
                                             game.endGame();
                                         } else {
-                                            moveHistory.push_back("Check!");
+                                            moveHistory.push_back(sf::String("Check!"));
                                         }
                                     } else if (!MoveHandler::hasLegalMoves(board, previousTurn)) {
-                                                moveHistory.push_back("Stalemate! It's a draw.");
-                                                game.endGame();
-                                            }
+                                        moveHistory.push_back(sf::String("Stalemate! It's a draw."));
+                                        game.endGame();
+                                    }
                                 } else {
                                     // Если ход невозможен, проверяем, не выбрана ли другая фигура
                                     auto piece = board.getPiece(row, col);
@@ -310,15 +313,11 @@ int main() {
             drawText.setFillColor(sf::Color(150, 150, 150));
         }
 
-        sf::String sfHistoryString;
-        for (const auto& move : moveHistory) {
-            sfHistoryString += move + "\n";
-        }
-        historyText.setString(sfHistoryString);
+        
 
         window.clear(sf::Color(245, 241, 235));
 
-        // Отрисовка координат (сначала цифры, потом буквы)
+        
         
 
         renderer.drawBoard();
@@ -336,8 +335,16 @@ int main() {
 
         window.draw(movesTitle);
         window.draw(historyBox);
-        window.draw(historyText);
 
+        // Формируем текст истории
+        sf::String historyString;
+        for (const auto& move : moveHistory) {
+            if (!move.isEmpty()) {
+                historyString += move + sf::String("\n");
+            }
+        }
+        historyText.setString(historyString);
+        window.draw(historyText);
 
         window.draw(flipBtn);
         window.draw(resignBtn);
