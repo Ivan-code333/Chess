@@ -38,6 +38,16 @@ bool Game::makeMove(int fromRow, int fromCol, int toRow, int toCol) {
 
         // Смена хода
         currentTurn = (currentTurn == Color::White) ? Color::Black : Color::White;
+
+        // Проверяем шах и мат после хода
+        if (MoveHandler::isKingInCheck(board, currentTurn)) {
+            if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+                gameOver = true; // Мат
+            }
+        } else if (!MoveHandler::hasLegalMoves(board, currentTurn)) {
+            gameOver = true; // Пат
+        }
+
         return true;
     }
 

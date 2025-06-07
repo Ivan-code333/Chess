@@ -148,25 +148,25 @@ int main() {
     sf::Text coordG("g", font, 28);
     sf::Text coordH("h", font, 28);
 
-    // Устанавливаем позиции для горизонтальных координат
-    coord8.setPosition(boardPx+5, cellSize/2 - 15);
-    coord7.setPosition(boardPx+5, cellSize*1.5 - 15);
-    coord6.setPosition(boardPx+5, cellSize*2.5 - 15);
-    coord5.setPosition(boardPx+5, cellSize*3.5 - 15);
-    coord4.setPosition(boardPx+5, cellSize*4.5 - 15);
-    coord3.setPosition(boardPx+5, cellSize*5.5 - 15);
-    coord2.setPosition(boardPx+5, cellSize*6.5 - 15);
-    coord1.setPosition(boardPx+5, cellSize*7.5 - 15);
+    // Устанавливаем позиции для горизонтальных координат (сверху вниз: 8-1)
+    coord8.setPosition(boardPx+5, cellSize*0 + cellSize/2 - 15);
+    coord7.setPosition(boardPx+5, cellSize*1 + cellSize/2 - 15);
+    coord6.setPosition(boardPx+5, cellSize*2 + cellSize/2 - 15);
+    coord5.setPosition(boardPx+5, cellSize*3 + cellSize/2 - 15);
+    coord4.setPosition(boardPx+5, cellSize*4 + cellSize/2 - 15);
+    coord3.setPosition(boardPx+5, cellSize*5 + cellSize/2 - 15);
+    coord2.setPosition(boardPx+5, cellSize*6 + cellSize/2 - 15);
+    coord1.setPosition(boardPx+5, cellSize*7 + cellSize/2 - 15);
 
-    // Устанавливаем позиции для вертикальных координат
-    coordA.setPosition(cellSize/2 - 10, boardPx + coordSize/2 - 20); // Промежуточное положение
-    coordB.setPosition(cellSize*1.5 - 10, boardPx + coordSize/2 - 20);
-    coordC.setPosition(cellSize*2.5 - 10, boardPx + coordSize/2 - 20);
-    coordD.setPosition(cellSize*3.5 - 10, boardPx + coordSize/2 - 20);
-    coordE.setPosition(cellSize*4.5 - 10, boardPx + coordSize/2 - 20);
-    coordF.setPosition(cellSize*5.5 - 10, boardPx + coordSize/2 - 20);
-    coordG.setPosition(cellSize*6.5 - 10, boardPx + coordSize/2 - 20);
-    coordH.setPosition(cellSize*7.5 - 10, boardPx + coordSize/2 - 20);
+    // Устанавливаем позиции для вертикальных координат (слева направо: a-h)
+    coordA.setPosition(cellSize*0 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordB.setPosition(cellSize*1 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordC.setPosition(cellSize*2 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordD.setPosition(cellSize*3 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordE.setPosition(cellSize*4 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordF.setPosition(cellSize*5 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordG.setPosition(cellSize*6 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+    coordH.setPosition(cellSize*7 + cellSize/2 - 10, boardPx + coordSize/2 - 20);
 
     // Устанавливаем цвет для всех координат
     coord1.setFillColor(sf::Color(0, 0, 0));
@@ -398,6 +398,45 @@ int main() {
                         inputBox.setOutlineColor(sf::Color(100, 100, 100));
                     }
 
+                    // Проверка нажатия кнопки Flip board
+                    if (mouseX >= boardPx + coordSize + 20 && mouseX <= boardPx + coordSize + panelWidth - 20 &&
+                        mouseY >= 470 && mouseY <= 510) {
+                        renderer.flipBoard();
+                        
+                        // Обновляем позиции цифровых координат
+                        if (renderer.isFlipped()) {
+                            // Для черных: снизу вверх (1-8)
+                            coord1.setPosition(boardPx+5, cellSize*0 + cellSize/2 - 15);
+                            coord2.setPosition(boardPx+5, cellSize*1 + cellSize/2 - 15);
+                            coord3.setPosition(boardPx+5, cellSize*2 + cellSize/2 - 15);
+                            coord4.setPosition(boardPx+5, cellSize*3 + cellSize/2 - 15);
+                            coord5.setPosition(boardPx+5, cellSize*4 + cellSize/2 - 15);
+                            coord6.setPosition(boardPx+5, cellSize*5 + cellSize/2 - 15);
+                            coord7.setPosition(boardPx+5, cellSize*6 + cellSize/2 - 15);
+                            coord8.setPosition(boardPx+5, cellSize*7 + cellSize/2 - 15);
+                        } else {
+                            // Для белых: сверху вниз (8-1)
+                            coord8.setPosition(boardPx+5, cellSize*0 + cellSize/2 - 15);
+                            coord7.setPosition(boardPx+5, cellSize*1 + cellSize/2 - 15);
+                            coord6.setPosition(boardPx+5, cellSize*2 + cellSize/2 - 15);
+                            coord5.setPosition(boardPx+5, cellSize*3 + cellSize/2 - 15);
+                            coord4.setPosition(boardPx+5, cellSize*4 + cellSize/2 - 15);
+                            coord3.setPosition(boardPx+5, cellSize*5 + cellSize/2 - 15);
+                            coord2.setPosition(boardPx+5, cellSize*6 + cellSize/2 - 15);
+                            coord1.setPosition(boardPx+5, cellSize*7 + cellSize/2 - 15);
+                        }
+                        
+                        // Обновляем позиции буквенных координат
+                        coordA.setPosition(cellSize*(renderer.isFlipped() ? 7 : 0) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordB.setPosition(cellSize*(renderer.isFlipped() ? 6 : 1) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordC.setPosition(cellSize*(renderer.isFlipped() ? 5 : 2) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordD.setPosition(cellSize*(renderer.isFlipped() ? 4 : 3) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordE.setPosition(cellSize*(renderer.isFlipped() ? 3 : 4) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordF.setPosition(cellSize*(renderer.isFlipped() ? 2 : 5) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordG.setPosition(cellSize*(renderer.isFlipped() ? 1 : 6) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                        coordH.setPosition(cellSize*(renderer.isFlipped() ? 0 : 7) + cellSize/2 - 10, boardPx + coordSize/2 - 20);
+                    }
+
                     // Проверка нажатия кнопки Resign
                     if (mouseX >= boardPx + coordSize + 20 && mouseX <= boardPx + coordSize + panelWidth - 20 &&
                         mouseY >= 520 && mouseY <= 570) {
@@ -433,6 +472,11 @@ int main() {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         if (!game.isGameOver()) {
             if (mousePos.x >= boardPx + coordSize + 20 && mousePos.x <= boardPx + coordSize + panelWidth - 20) {
+                if (mousePos.y >= 470 && mousePos.y <= 510) {
+                    flipBtn.setFillColor(sf::Color(235, 231, 225));
+                } else {
+                    flipBtn.setFillColor(sf::Color(245, 241, 235));
+                }
                 if (mousePos.y >= 520 && mousePos.y <= 570) {
                     resignBtn.setFillColor(sf::Color(235, 231, 225));
                 } else {
@@ -444,10 +488,12 @@ int main() {
                     drawBtn.setFillColor(sf::Color(245, 241, 235));
                 }
             } else {
+                flipBtn.setFillColor(sf::Color(245, 241, 235));
                 resignBtn.setFillColor(sf::Color(245, 241, 235));
                 drawBtn.setFillColor(sf::Color(245, 241, 235));
             }
         } else {
+            flipBtn.setFillColor(sf::Color(220, 220, 220));
             resignBtn.setFillColor(sf::Color(220, 220, 220));
             drawBtn.setFillColor(sf::Color(220, 220, 220));
             resignText.setFillColor(sf::Color(150, 150, 150));
@@ -466,7 +512,9 @@ int main() {
         // Подсветка выбранной фигуры
         if (isPieceSelected) {
             sf::RectangleShape highlight(sf::Vector2f(cellSize, cellSize));
-            highlight.setPosition(sf::Vector2f(selectedCol * cellSize, selectedRow * cellSize)); // Сдвигаем с учетом координат
+            int displayCol = renderer.isFlipped() ? 7 - selectedCol : selectedCol;
+            int displayRow = renderer.isFlipped() ? 7 - selectedRow : selectedRow;
+            highlight.setPosition(sf::Vector2f(displayCol * cellSize, displayRow * cellSize));
             highlight.setFillColor(sf::Color(255, 255, 0, 100));
             window.draw(highlight);
         }
