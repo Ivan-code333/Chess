@@ -28,6 +28,9 @@ bool MoveHandler::isMoveLegal(const Board& board, int fromRow, int fromCol, int 
     // рокировка
     if ((symbol == 'K' || symbol == 'k') && rowDiff == 0 && std::abs(colDiff) == 2)
     {
+        // Нельзя рокироваться, если король под шахом
+        if (isKingInCheck(board, currentTurn))
+            return false;
         bool kingSide = (colDiff > 0);
         // Проверка прав на рокировку
         if (kingSide)
